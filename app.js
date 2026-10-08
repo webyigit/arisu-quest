@@ -26,6 +26,8 @@ let settings = Object.assign({scale:1.15, theme:"", sound:true, map:DEFAULT_MAP,
 let curDate = todayStr();
 let day = emptyDay(curDate);
 let shareToken = null;
+const view = Object.assign({st:"all", gu:""}, LS.get("aq_view")||{});
+const openIds = new Set(), foldOff = new Set();
 let saveTimer=null, saving=Promise.resolve();
 
 function todayStr(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
@@ -221,26 +223,50 @@ function renderRoute(){
     const db=$("#demoBtn"); if(db) db.onclick=loadDemo; return;
   }
   const stops=[...day.stops].sort((a,b)=>(a.order??0)-(b.order??0));
-  let html="", prev=hasXY(settings.start)&&!readonly?{...settings.start,name:settings.start.name||"출발지"}:null, lastOffice=null, oi=-1, n=0, tot={car:0,walk:0,transit:0,d:0}, unknownLeg=0;
+  const show=s=>(view.st==="all"||(view.st==="todo"?!s.done:s.done))&&(!view.gu||guOf(s)===view.gu);
+  const gus=[...new Set(stops.map(guOf).filter(Boolean))];
+  if(view.gu&&!gus.includes(view.gu)) view.gu="";
+  const doneN=stops.filter(x=>x.done).length;
+  const seg=(k,l)=>`<button class="fchip ${view.st===k?"on":""}" data-flt="st" data-v="${k}" aria-pressed="${view.st===k}">${l}</button>`;
+  const guB=(g,l)=>`<button class="fchip ${view.gu===g?"on":""}" data-flt="gu" data-v="${esc(g)}" aria-pressed="${view.gu===g}">${esc(l)}</button>`;
+  let bar=`<div class="fbar">
+    <div class="frow">${seg("all",`전체 ${stops.length}`)}${seg("todo",`남은 곳 ${stops.length-doneN}`)}${seg("done",`완료 ${doneN}`)}</div>
+    ${gus.length>1?`<div class="frow">${guB("","모든 구")}${gus.map(g=>guB(g,g)).join("")}</div>`:""}
+    <div class="frow end"><button class="fchip ghost" data-flt="open" data-v="${openIds.size?"0":"1"}">${openIds.size?"모두 접기":"모두 펼치기"}</button></div>
+  </div>`;
+  let html="", prev=hasXY(settings.start)&&!readonly?{...settings.start,name:settings.start.name||"출발지"}:null, lastOffice=null, oi=-1, n=0, tot={car:0,walk:0,transit:0,d:0}, unknownLeg=0, shown=0;
   html+=`<ol class="list">`;
   for(const s of stops){
     const off=officeOf(s)||"관할 미지정";
     if(off!==lastOffice){oi++;lastOffice=off;
       const cnt=stops.filter(x=>(officeOf(x)||"관할 미지정")===off);
-      html+=`</ol><div class="office"><div class="office-h"><span class="sw" style="background:${OFF_COL[oi%4]}"></span>${esc(off.replace(" [확인 필요]",""))}${off.includes("[확인 필요]")?' <span class="chip q">관할 [확인 필요]</span>':""}<span class="cnt">${cnt.filter(x=>x.done).length}/${cnt.length} CLEAR</span></div></div><ol class="list">`;
+      if(cnt.some(show)){ const folded=foldOff.has(off);
+        html+=`</ol><div class="office"><button class="office-h" data-flt="fold" data-v="${esc(off)}" aria-expanded="${!folded}"><span class="sw" style="background:${OFF_COL[oi%4]}"></span>${esc(off.replace(" [확인 필요]",""))}${off.includes("[확인 필요]")?' <span class="chip q">관할 [확인 필요]</span>':""}<span class="cnt">${cnt.filter(x=>x.done).length}/${cnt.length} CLEAR</span><span class="caret">${folded?"▸":"▾"}</span></button></div><ol class="list">`;
+      }
     }
     n++;
+    let leg="", eta="";
     if(prev){
       if(hasXY(prev)&&hasXY(s)){const e=est(prev,s);tot.car+=e.car;tot.walk+=e.walk;tot.transit+=e.transit;tot.d+=e.d;
-        html+=`<li class="leg" aria-label="이동 구간"><span>${e.d.toFixed(1)}km</span><span>자동차 <b>${fmtMin(e.car)}</b></span><span>도보 <b>${fmtMin(e.walk)}</b></span><span>대중교통 <b>${fmtMin(e.transit)}</b></span><a href="${kakaoLeg(prev,s)}" target="_blank" rel="noopener">실제 길찾기 ↗</a></li>`;
-      } else {unknownLeg++; html+=`<li class="leg"><span class="need">좌표 없음 · 소요시간 [확인 필요]</span><a href="${kakaoLeg(prev,s)}" target="_blank" rel="noopener">길찾기 ↗</a></li>`}
+        eta=`<span class="eta" title="이전 장소에서 자동차">🚗${fmtMin(e.car)}</span>`;
+        leg=`<div class="leg"><span>${esc(prev.name||"이전")}에서 ${e.d.toFixed(1)}km</span><span>자동차 <b>${fmtMin(e.car)}</b></span><span>도보 <b>${fmtMin(e.walk)}</b></span><span>대중교통 <b>${fmtMin(e.transit)}</b></span><a href="${kakaoLeg(prev,s)}" target="_blank" rel="noopener">길찾기 ↗</a></div>`;
+      } else {unknownLeg++; eta=`<span class="eta q">?</span>`; leg=`<div class="leg"><span class="need">좌표 없음 · 소요시간 [확인 필요]</span><a href="${kakaoLeg(prev,s)}" target="_blank" rel="noopener">길찾기 ↗</a></div>`}
     }
-    const gu=guOf(s), offRaw=officeOf(s), m=s.meas||{};
-    html+=`<li class="stop ${s.done?"done":""}" data-id="${s.id}">
-      <div><input type="checkbox" class="chk" id="chk-${s.id}" ${s.done?"checked":""} ${readonly?"disabled":""} aria-label="${esc(s.name)} 완료"><div class="num">${String(n).padStart(2,"0")}</div></div>
-      <div class="body">
-        ${s.example?'<span class="example-flag" style="align-self:flex-start">예시</span>':""}
-        <div class="nm">${esc(s.name||"이름 없음")}</div>
+    const legPrev=prev;
+    if(hasXY(s)) prev=s; else prev=prev||s;
+    if(!show(s)||foldOff.has(off)) continue;
+    shown++;
+    const gu=guOf(s), offRaw=officeOf(s), m=s.meas||{}, open=openIds.has(s.id);
+    html+=`<li class="stop ${s.done?"done":""} ${open?"open":""}" data-id="${s.id}">
+      <input type="checkbox" class="chk" id="chk-${s.id}" ${s.done?"checked":""} ${readonly?"disabled":""} aria-label="${esc(s.name)} 완료">
+      <button class="sum" data-flt="toggle" aria-expanded="${open}">
+        <span class="num">${String(n).padStart(2,"0")}</span>
+        <span class="tx"><span class="nm">${esc(s.name||"이름 없음")}</span>
+        <span class="mini">${gu?esc(gu):'<span class="need">구 [확인 필요]</span>'}${s.dong?" · "+esc(s.dong):""}${s.example?" · 예시":""}</span></span>
+        ${eta}<span class="caret">${open?"▾":"▸"}</span>
+      </button>
+      ${open?`<div class="detail">
+        ${leg}
         <div class="addr">${esc(s.addr||"")}</div>
         <div class="chips">
           ${gu?`<span class="chip gu">서울 ${esc(gu)}</span>`:`<span class="chip q">자치구 [확인 필요]</span>`}
@@ -253,21 +279,20 @@ function renderRoute(){
           <div class="meas">${STD.map(t=>`<label>${t.name}<input data-m="${t.key}" id="m-${s.id}-${t.key}" inputmode="decimal" value="${esc(m[t.key]??"")}" class="${verdict(t.key,m[t.key]??"")}" ${readonly?"readonly":""}></label>`).join("")}</div>
         </details>
         <div class="acts">
-          <a class="btn sm" href="${kakaoLeg(prev||s,s)}" target="_blank" rel="noopener">지도</a>
+          <a class="btn sm" href="${kakaoLeg(legPrev||s,s)}" target="_blank" rel="noopener">지도</a>
           ${readonly?"":`<button class="btn sm" data-act="edit">수정</button>
           <button class="btn sm" data-act="up" aria-label="위로">▲</button>
           <button class="btn sm" data-act="down" aria-label="아래로">▼</button>
           <button class="btn sm ghost" data-act="del">삭제</button>`}
         </div>
-      </div>
-      ${s.done?`<span class="stamp" id="stamp-${s.id}">CLEAR</span>`:""}
+      </div>`:""}
     </li>`;
-    if(hasXY(s)) prev=s; else prev=prev||s;
   }
   html+=`</ol>`;
+  if(!shown) html+=`<p class="small muted" style="text-align:center;margin:1rem 0">조건에 맞는 장소가 없어요.</p>`;
   const sum = tot.d? `<div class="px" style="margin-top:1rem;box-shadow:none;padding:.7rem"><div class="small" style="font-weight:800">총 이동 (추정${unknownLeg?`, 좌표 없는 ${unknownLeg}구간 제외`:""})</div>
      <div class="row small" style="gap:.4rem 1rem"><span>${tot.d.toFixed(1)}km</span><span>자동차 <b>${fmtMin(tot.car)}</b></span><span>도보 <b>${fmtMin(tot.walk)}</b></span><span>대중교통 <b>${fmtMin(tot.transit)}</b></span></div></div>`:"";
-  out.innerHTML = (day.routed||readonly?"":'<p class="small need" style="margin:.6rem 0 0">아직 동선 정렬 전이에요. "동선 짜기"를 눌러 주세요.</p>') + html.replace('<ol class="list"></ol>',"") + sum;
+  out.innerHTML = (day.routed||readonly?"":'<p class="small need" style="margin:.6rem 0 0">아직 동선 정렬 전이에요. "동선 짜기"를 눌러 주세요.</p>') + bar + html.replace(/<ol class="list">\s*<\/ol>/g,"") + sum;
 }
 function pixTaxi(){
   const rows=["....YYYYY....","...Y.WW.WY...","YYYYYYYYYYYYY","YYKYYYYYYYKYY",".KKK.....KKK."];
@@ -295,6 +320,14 @@ $("#routeOut").addEventListener("input",e=>{
   s.meas=s.meas||{}; s.meas[k]=e.target.value.trim(); e.target.className=verdict(k,s.meas[k]); persistDay();
 });
 $("#routeOut").addEventListener("click",e=>{
+  const f=e.target.closest("[data-flt]");
+  if(f){ const k=f.dataset.flt, v=f.dataset.v;
+    if(k==="st"||k==="gu"){ view[k]=v; LS.set("aq_view",view); }
+    if(k==="fold"){ foldOff.has(v)?foldOff.delete(v):foldOff.add(v); }
+    if(k==="toggle"){ const id=f.closest(".stop").dataset.id; openIds.has(id)?openIds.delete(id):openIds.add(id); }
+    if(k==="open"){ openIds.clear(); if(v==="1") day.stops.forEach(x=>openIds.add(x.id)); }
+    renderRoute(); return;
+  }
   const b=e.target.closest("[data-act]"); if(!b||readonly) return;
   const li=b.closest(".stop"); const i=day.stops.findIndex(x=>x.id===li.dataset.id); const s=day.stops[i];
   const act=b.dataset.act;

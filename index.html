@@ -241,6 +241,29 @@ details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
 .auth-link{color:var(--water)!important}
 .clear-banner{color:var(--taxi);text-shadow:3px 3px 0 var(--shadow)}
 #au-msg{color:var(--bad)!important}
+/* 컴팩트 목록 + 필터 */
+.fbar{display:flex;flex-direction:column;gap:.4rem;margin:.6rem 0 .2rem}
+.frow{display:flex;flex-wrap:wrap;gap:.35rem}
+.frow.end{justify-content:flex-end}
+.fchip{font:inherit;font-size:.85rem;font-weight:800;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:.3rem .75rem;cursor:pointer;min-height:2.2rem}
+.fchip.on{background:var(--taxi);color:var(--taxi-ink,#fff)}
+.fchip.ghost{border-style:dashed;font-size:.8rem}
+.office-h{width:100%;border:0;background:none;color:var(--ink);cursor:pointer;text-align:left;padding:0}
+.office-h .caret{margin-left:auto;font-size:1rem}
+.list{gap:.4rem}
+.stop{grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.5rem;padding:.4rem .55rem;box-shadow:0 3px 0 var(--shadow)}
+.stop .chk{width:2.2rem;height:2.2rem}
+.stop .sum{display:flex;align-items:center;gap:.45rem;min-width:0;width:100%;border:0;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer;padding:.15rem 0;min-height:2.4rem}
+.stop .num{margin:0;flex:none;color:var(--muted)}
+.stop .tx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.stop .nm{font-size:1.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stop .mini{font-size:.75rem;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stop .eta{flex:none;font-size:.78rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stop .eta.q{color:var(--warn)}
+.stop .caret{flex:none;color:var(--muted);font-size:.9rem}
+.stop .detail{grid-column:1/-1;display:flex;flex-direction:column;gap:.45rem;border-top:2px dashed var(--shadow);padding-top:.5rem}
+.stop .detail .leg{margin:0;padding:.1rem 0 .1rem .6rem}
+.stop.done .sum{opacity:.6}
 </style>
 </head>
 <body>
