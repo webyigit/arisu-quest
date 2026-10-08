@@ -25,6 +25,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html app.js manifest.webmanifest icon.svg _site/
+          sed -i "s#src=\"app.js\"#src=\"app.js?v=${GITHUB_SHA::7}\"#; s#src=\"config.js\"#src=\"config.js?v=${GITHUB_SHA::7}\"#" _site/index.html
           printf 'window.ARISU_CONFIG={url:%s,key:%s};\n' "\"$SUPABASE_URL\"" "\"$SUPABASE_PUBLISHABLE_KEY\"" > _site/config.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
