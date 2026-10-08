@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0D0B22">
+<meta name="description" content="아리수 수질검사 방문지를 사진으로 접수하고 수도사업소별 동선과 완료 체크를 관리하는 일정 앱">
+<title>아리수 퀘스트</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1:wght@400;600;800&family=Press+Start+2P&display=swap">
+<style>
+/* 레이아웃: 레트로 게임 의뢰 단말기. 픽셀 테두리 패널을 한 줄로 쌓는 모바일 단일 컬럼, HUD는 상단 고정 */
+:root{
+  --bg:#E6EDFA; --bg2:#D7E1F5; --panel:#FFFFFF; --ink:#17163C; --muted:#585C86;
+  --line:#17163C; --shadow:#17163C; --taxi:#F2B200; --taxi-ink:#17163C;
+  --water:#0B7FC4; --pink:#D63B74; --ok:#12895A; --warn:#B86E00; --bad:#C93434;
+  --chip:#EEF2FC; --scan:rgba(23,22,60,.035);
+  --f-disp:"Do Hyeon","Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-pix:"Press Start 2P","Do Hyeon",monospace;
+  --scale:1.15;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D0B22; --bg2:#151236; --panel:#1B1842; --ink:#EEEBFF; --muted:#A9A5DA;
+  --line:#6C66D9; --shadow:#000000; --taxi:#FFD23F; --taxi-ink:#17163C;
+  --water:#41CFFF; --pink:#FF63A5; --ok:#3EE08C; --warn:#FFB547; --bad:#FF6E6E;
+  --chip:#26225A; --scan:rgba(255,255,255,.035); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D0B22; --bg2:#151236; --panel:#1B1842; --ink:#EEEBFF; --muted:#A9A5DA;
+  --line:#6C66D9; --shadow:#000000; --taxi:#FFD23F; --taxi-ink:#17163C;
+  --water:#41CFFF; --pink:#FF63A5; --ok:#3EE08C; --warn:#FFB547; --bad:#FF6E6E;
+  --chip:#26225A; --scan:rgba(255,255,255,.035); color-scheme:dark}
+
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{font-size:calc(16px * var(--scale))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:1rem;line-height:1.55;
+  background-image:repeating-linear-gradient(0deg,var(--scan) 0 2px,transparent 2px 4px);min-height:100%}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--water)}
+:focus-visible{outline:3px dashed var(--pink);outline-offset:3px}
+
+.wrap{max-width:46rem;margin:0 auto;padding-inline:16px;padding-block:0 6rem;display:flex;flex-direction:column;gap:1.1rem}
+
+/* 픽셀 패널 */
+.px{background:var(--panel);border:3px solid var(--line);box-shadow:5px 5px 0 var(--shadow);padding:1rem}
+.px-h{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin:0 0 .7rem}
+.px-h h2{font-family:var(--f-disp);font-weight:400;font-size:1.45rem;margin:0;line-height:1.2;text-wrap:balance}
+.tag{font-family:var(--f-pix);font-size:.55rem;letter-spacing:.06em;background:var(--ink);color:var(--panel);padding:.35rem .5rem;line-height:1}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:3px solid var(--line);background:var(--panel);
+  box-shadow:3px 3px 0 var(--shadow);padding:.55rem .85rem;font-weight:800;cursor:pointer;min-height:2.75rem;text-decoration:none;color:var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--shadow)}
+.btn.y{background:var(--taxi);color:var(--taxi-ink)}
+.btn.b{background:var(--water);color:#fff;border-color:var(--line)}
+.btn.sm{min-height:2.2rem;padding:.3rem .6rem;font-size:.85rem}
+.btn.ghost{box-shadow:none}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:.82rem}
+.need{color:var(--warn);font-weight:800}
+
+/* 상단 HUD */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:3px solid var(--line);padding:.6rem 16px;margin-bottom:1rem}
+.hud-in{max-width:46rem;margin:0 auto;display:flex;flex-direction:column;gap:.5rem}
+.hud-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.logo{font-family:var(--f-disp);font-size:1.35rem;line-height:1;display:flex;align-items:center;gap:.45rem;white-space:nowrap}
+.logo i{display:inline-block;width:1.1rem;height:1.1rem;background:var(--water);box-shadow:inset -4px -4px 0 rgba(0,0,0,.18);clip-path:polygon(50% 0,100% 60%,80% 100%,20% 100%,0 60%)}
+.tools{display:flex;gap:.35rem}
+.ic{width:2.3rem;height:2.3rem;box-shadow:2px 2px 0 var(--shadow);padding:0;min-height:0;font-family:var(--f-pix);font-size:.6rem}
+.exp{display:grid;grid-template-columns:auto 1fr auto;gap:.5rem;align-items:center;font-family:var(--f-pix);font-size:.55rem}
+.bar{height:1rem;border:3px solid var(--line);background:var(--bg2);position:relative;overflow:hidden}
+.bar b{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(90deg,var(--ok) 0 10px,color-mix(in srgb,var(--ok) 75%,#fff) 10px 12px);transition:width .5s steps(8)}
+.coins{color:var(--taxi);text-shadow:2px 2px 0 var(--shadow)}
+
+/* 날짜 */
+.date-nav{display:grid;grid-template-columns:auto 1fr auto;gap:.5rem;align-items:center}
+.date-nav .mid{text-align:center}
+.date-big{font-family:var(--f-disp);font-size:1.6rem;line-height:1.1}
+.date-nav input{border:3px solid var(--line);background:var(--panel);padding:.3rem .4rem;font-size:.85rem;max-width:100%}
+
+/* 수질 기준 */
+.std{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}
+.gauge{border:3px solid var(--line);padding:.6rem;background:var(--bg2);display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.gauge .k{font-weight:800;font-size:.85rem}
+.gauge .v{font-family:var(--f-disp);font-size:1.35rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.gauge .u{font-size:.75rem;color:var(--muted)}
+.gauge input{width:100%;border:2px solid var(--line);background:var(--panel);padding:.3rem .4rem;font-variant-numeric:tabular-nums}
+.verdict{font-family:var(--f-pix);font-size:.5rem;padding:.25rem .35rem;align-self:flex-start;line-height:1.2}
+.verdict.ok{background:var(--ok);color:var(--panel)} .verdict.bad{background:var(--bad);color:#fff} .verdict.na{background:var(--chip);color:var(--muted)}
+@media (max-width:440px){.std{grid-template-columns:1fr}.gauge{display:grid;grid-template-columns:1fr auto;align-items:center}.gauge input{grid-column:1/-1}}
+
+/* 의뢰 접수 */
+.drop{border:3px dashed var(--line);padding:1rem;text-align:center;background:var(--bg2);cursor:pointer;display:flex;flex-direction:column;gap:.4rem;align-items:center}
+.drop strong{font-family:var(--f-disp);font-weight:400;font-size:1.3rem}
+.thumbs{display:flex;gap:.4rem;flex-wrap:wrap}
+.thumbs img{width:4rem;height:4rem;object-fit:cover;border:2px solid var(--line)}
+textarea,.inp{width:100%;border:3px solid var(--line);background:var(--panel);padding:.5rem .6rem;min-height:2.75rem}
+textarea{min-height:6rem;resize:vertical}
+.ai-out{font-family:var(--f-pix);font-size:.55rem;line-height:1.8;color:var(--water);min-height:1rem;white-space:pre-wrap;word-break:break-all}
+details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
+
+/* 동선 */
+.route-ctl{display:grid;grid-template-columns:1fr auto;gap:.5rem}
+.office{margin-top:.4rem}
+.office-h{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-family:var(--f-disp);font-size:1.25rem;margin:.6rem 0 .5rem}
+.office-h .cnt{font-family:var(--f-pix);font-size:.55rem;color:var(--muted)}
+.office-h .sw{width:.9rem;height:.9rem;border:2px solid var(--line);display:inline-block}
+.list{display:flex;flex-direction:column;gap:.6rem;list-style:none;margin:0;padding:0}
+.leg{display:flex;flex-wrap:wrap;gap:.35rem .8rem;align-items:center;font-size:.8rem;color:var(--muted);padding:.1rem .2rem .1rem 1.4rem;border-left:3px dotted var(--line);margin-left:1.1rem}
+.leg b{color:var(--ink);font-variant-numeric:tabular-nums}
+.leg a{font-weight:800}
+.stop{display:grid;grid-template-columns:auto 1fr;gap:.7rem;border:3px solid var(--line);background:var(--panel);padding:.75rem;box-shadow:4px 4px 0 var(--shadow);position:relative;min-width:0}
+.stop.done{background:var(--bg2)}
+.stop.done .nm{text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:var(--ok)}
+.chk{appearance:none;-webkit-appearance:none;width:2.6rem;height:2.6rem;border:3px solid var(--line);background:var(--panel);cursor:pointer;display:grid;place-items:center;margin:0;box-shadow:2px 2px 0 var(--shadow)}
+.chk:checked{background:var(--ok)}
+.chk:checked::after{content:"";width:1.1rem;height:.6rem;border-left:5px solid #fff;border-bottom:5px solid #fff;transform:rotate(-45deg) translate(1px,-2px)}
+.num{font-family:var(--f-pix);font-size:.6rem;text-align:center;margin-top:.35rem}
+.body{min-width:0;display:flex;flex-direction:column;gap:.35rem}
+.nm{font-family:var(--f-disp);font-size:1.3rem;line-height:1.2;word-break:keep-all;overflow-wrap:anywhere}
+.addr{font-size:.92rem;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem}
+.chip{font-size:.78rem;font-weight:800;border:2px solid var(--line);padding:.1rem .45rem;background:var(--chip)}
+.chip.gu{background:var(--water);color:#fff}
+.chip.of{background:var(--taxi);color:var(--taxi-ink)}
+.chip.q{border-style:dashed;color:var(--warn);background:transparent}
+.note{font-size:.85rem;color:var(--muted)}
+.acts{display:flex;flex-wrap:wrap;gap:.35rem}
+.meas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin-top:.3rem}
+.meas label{font-size:.75rem;font-weight:800;display:flex;flex-direction:column;gap:.15rem}
+.meas input{border:2px solid var(--line);background:var(--panel);padding:.25rem .35rem;width:100%;font-variant-numeric:tabular-nums}
+.meas input.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--panel))}
+.meas input.ok{border-color:var(--ok)}
+.stamp{position:absolute;right:.6rem;top:.5rem;font-family:var(--f-pix);font-size:.6rem;color:var(--ok);border:3px solid var(--ok);padding:.3rem .4rem;transform:rotate(-8deg);background:var(--panel)}
+.stamp.pop{animation:pop .45s steps(4)}
+@keyframes pop{0%{transform:rotate(-8deg) scale(2.4);opacity:0}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+
+.empty{text-align:center;padding:1.2rem .5rem;display:flex;flex-direction:column;gap:.6rem;align-items:center}
+.empty .pixtaxi{width:6rem;height:3rem;image-rendering:pixelated}
+.example-flag{font-family:var(--f-pix);font-size:.5rem;background:var(--pink);color:#fff;padding:.25rem .4rem}
+
+/* 오버레이 */
+.ov{position:fixed;inset:0;z-index:50;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(2px);display:grid;place-items:center;padding:16px}
+.term{width:min(32rem,100%);max-height:90vh;overflow:auto;background:#0B0A1E;color:#E8FFE9;border:4px solid var(--taxi);box-shadow:8px 8px 0 var(--shadow);padding:1.2rem;position:relative}
+.term::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px)}
+.term .t-h{font-family:var(--f-pix);font-size:.6rem;color:#FFD23F;display:flex;justify-content:space-between;margin-bottom:1rem}
+.term .typed{font-family:var(--f-disp);font-size:1.35rem;line-height:1.5;min-height:6.5rem;white-space:pre-wrap}
+.term .typed::after{content:"▮";animation:blink 1s steps(1) infinite;color:#FFD23F}
+@keyframes blink{50%{opacity:0}}
+.term .opts{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+.term .opt{font-family:var(--f-disp);font-size:1.2rem;text-align:left;background:transparent;border:3px solid #3D3A7A;color:#E8FFE9;padding:.5rem .8rem;cursor:pointer}
+.term .opt:hover,.term .opt:focus-visible{border-color:#FFD23F;color:#FFD23F}
+.term .opt:hover::before,.term .opt:focus-visible::before{content:"▶ "}
+.sheet{width:min(36rem,100%);max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:.8rem}
+.sheet label{display:flex;flex-direction:column;gap:.25rem;font-weight:800;font-size:.9rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:440px){.grid2{grid-template-columns:1fr}}
+.toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--panel);border:3px solid var(--taxi);padding:.6rem 1rem;font-weight:800;max-width:calc(100% - 32px)}
+.fx{position:fixed;inset:0;pointer-events:none;z-index:55}
+.clear-banner{font-family:var(--f-pix);font-size:1.1rem;color:var(--taxi);text-shadow:4px 4px 0 var(--shadow);text-align:center;line-height:1.6}
+.src{font-size:.75rem;color:var(--muted)}
+.warnbox{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--panel));display:flex;flex-direction:column;gap:.2rem}
+.warnbox strong{color:var(--bad);font-family:var(--f-disp);font-weight:400;font-size:1.2rem}
+.sharedbox{border-color:var(--water);display:flex;flex-direction:column;gap:.2rem}
+.sharedbox strong{color:var(--water);font-family:var(--f-disp);font-weight:400;font-size:1.2rem}
+.term .inp{font-family:var(--f-body)}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hud">
+  <div class="hud-in">
+    <div class="hud-top">
+      <div class="logo"><i aria-hidden="true"></i>아리수 퀘스트</div>
+      <div class="tools">
+        <button class="btn ic" id="fontDown" aria-label="글씨 작게">A-</button>
+        <button class="btn ic" id="fontUp" aria-label="글씨 크게">A+</button>
+        <button class="btn ic" id="themeBtn" aria-label="다크/라이트 전환">☾</button>
+        <button class="btn ic" id="setBtn" aria-label="설정">⚙</button>
+      </div>
+    </div>
+    <div class="exp"><span id="lv">LV 1</span><div class="bar" aria-label="오늘 진행률"><b id="expBar"></b></div><span><span class="coins">●</span> <span id="coins">0</span></span></div>
+  </div>
+</header>
+
+<main class="wrap" id="app">
+  <div class="px warnbox" id="limitBanner" role="alert" hidden></div>
+  <div class="px sharedbox" id="sharedBanner" hidden></div>
+  <section class="px" aria-label="날짜">
+    <div class="date-nav">
+      <button class="btn sm" id="prevDay" aria-label="이전 날">◀</button>
+      <div class="mid"><div class="date-big" id="dateLabel">-</div>
+        <div class="small muted" id="dateSub">-</div></div>
+      <button class="btn sm" id="nextDay" aria-label="다음 날">▶</button>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:.6rem">
+      <input type="date" id="datePick" aria-label="날짜 선택">
+      <button class="btn sm" id="todayBtn">오늘로</button>
+      <button class="btn sm y" id="shareBtn">공유하기</button>
+    </div>
+  </section>
+
+  <section class="px" aria-label="수질 기준">
+    <div class="px-h"><h2>오늘의 수질 기준</h2><span class="tag">WATER STD</span></div>
+    <div class="std" id="stdBox"></div>
+    <p class="src" style="margin:.7rem 0 0">기준: 환경부 먹는물 수질기준 (<a href="https://news.seoul.go.kr/env/?p=565125" target="_blank" rel="noopener">서울시 환경 누리집</a>). 오늘 공개 측정값은 <a href="https://arisu.seoul.go.kr/arisumap/" target="_blank" rel="noopener">아리수맵</a>에서 확인 후 입력하세요. 자동 연동은 [확인 필요].</p>
+  </section>
+
+  <section class="px" aria-label="의뢰 접수" id="intake">
+    <div class="px-h"><h2>의뢰 접수</h2><span class="tag">NEW QUEST</span></div>
+    <label class="drop" id="drop" for="photo">
+      <strong>방문 목록 사진 올리기</strong>
+      <span class="small muted">촬영하거나 갤러리에서 고르면 휴대폰 안에서 글자를 읽어 목록으로 만들어요 (무료)</span>
+      <input type="file" id="photo" accept="image/*" multiple hidden>
+    </label>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="row" style="margin-top:.6rem">
+      <button class="btn y" id="ocrBtn" disabled>사진 글자 읽기</button>
+    </div>
+    <div class="ai-out" id="aiOut" aria-live="polite"></div>
+    <details style="margin-top:.4rem">
+      <summary>글로 붙여넣기 / 직접 추가</summary>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.4rem">
+        <textarea id="pasteBox" placeholder="예) 화곡동 OO아파트 관리사무소 / 서울 강서구 ..."></textarea>
+        <div class="row"><button class="btn b" id="parseBtn">글에서 목록 만들기</button>
+        <button class="btn" id="manualBtn">한 곳 직접 추가</button></div>
+      </div>
+    </details>
+  </section>
+
+  <section class="px" aria-label="오늘의 동선">
+    <div class="px-h"><h2>오늘의 동선</h2><span class="tag" id="questCount">0 / 0</span></div>
+    <div class="route-ctl">
+      <div class="small muted" id="startLabel">출발지: 설정에서 지정 (없으면 첫 장소부터)</div>
+      <button class="btn y" id="routeBtn">동선 짜기</button>
+    </div>
+    <div class="row" style="margin-top:.5rem">
+      <button class="btn sm" id="fillBtn">행정동·좌표 찾기</button>
+      <button class="btn sm ghost" id="clearDay">이 날 목록 비우기</button>
+    </div>
+    <p class="src" style="margin:.5rem 0 0">소요시간은 직선거리 기반 추정치예요. 실제 시간은 각 구간의 길찾기 링크(카카오맵)에서 확인하세요.</p>
+    <div id="routeOut"></div>
+  </section>
+</main>
+
+<div class="fx" id="fx" aria-hidden="true"></div>
+<div id="layer"></div>
+
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
