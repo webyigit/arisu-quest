@@ -194,7 +194,7 @@ function verdict(k,v){ if(v===""||v==null||isNaN(+v)) return ""; return STD.find
 function renderStd(){
   const box=$("#stdBox");
   if(box.dataset.h) return;
-  box.innerHTML = STD.map(s=>`<div class="gauge"><span class="k">${s.name}</span><span class="v">${s.show}</span><span class="u">${s.unit||"수소이온농도"}</span></div>`).join("");
+  box.innerHTML = STD.map(s=>`<div class="gauge"><span class="k">${s.name}</span><span class="v">${s.show}</span><span class="u">${s.unit||"&nbsp;"}</span></div>`).join("");
   box.dataset.h="1";
 }
 function renderHud(){
@@ -208,8 +208,8 @@ const OFF_COL=["var(--taxi)","var(--water)","var(--pink)","var(--ok)"];
 function renderRoute(){
   const out=$("#routeOut");
   if(!day.stops.length){
-    out.innerHTML=`<div class="empty"><div style="width:5rem" class="ari-bob">${ari("sleepy")}</div>
-      <div style="font-family:var(--f-disp);font-size:1.3rem">아직 접수된 의뢰가 없어요</div>
+    out.innerHTML=`<div class="empty"><div style="width:3.2rem">${ari("sleepy")}</div>
+      <div style="font-weight:700;font-size:1.05rem">아직 접수된 의뢰가 없어요</div>
       <div class="small muted">오른쪽 위 "＋ 접수"로 방문 목록 사진을 올리면 수도사업소별로 동선을 짜 드려요.</div>
       ${readonly?"":'<div class="row" style="justify-content:center"><button class="btn y sm" id="emptyAdd">＋ 접수하기</button><button class="btn sm" id="demoBtn">예시로 둘러보기</button></div>'}</div>`;
     const db=$("#demoBtn"); if(db) db.onclick=loadDemo; const ea=$("#emptyAdd"); if(ea) ea.onclick=()=>showIntake(true); return;
@@ -233,7 +233,7 @@ function renderRoute(){
     if(off!==lastOffice){oi++;lastOffice=off;
       const cnt=stops.filter(x=>(officeOf(x)||"관할 미지정")===off);
       if(cnt.some(show)){ const folded=foldOff.has(off);
-        html+=`</ol><div class="office"><button class="office-h" data-flt="fold" data-v="${esc(off)}" aria-expanded="${!folded}"><span class="sw" style="background:${OFF_COL[oi%4]}"></span>${esc(off.replace(" [확인 필요]",""))}${off.includes("[확인 필요]")?' <span class="chip q">관할 [확인 필요]</span>':""}<span class="cnt">${cnt.filter(x=>x.done).length}/${cnt.length} CLEAR</span><span class="caret">${folded?"▸":"▾"}</span></button></div><ol class="list">`;
+        html+=`</ol><div class="office"><button class="office-h" data-flt="fold" data-v="${esc(off)}" aria-expanded="${!folded}"><span class="sw" style="background:${OFF_COL[oi%4]}"></span>${esc(off.replace(" [확인 필요]",""))}${off.includes("[확인 필요]")?' <span class="chip q">관할 [확인 필요]</span>':""}<span class="cnt">${cnt.filter(x=>x.done).length}/${cnt.length} 완료</span><span class="caret">${folded?"▸":"▾"}</span></button></div><ol class="list">`;
       }
     }
     n++;
@@ -337,7 +337,7 @@ function closeLayer(){ $("#layer").innerHTML=""; }
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&user)closeLayer()});
 function toast(msg){ const t=document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2800); }
 function confirmBox(msg,yes){
-  const ov=openLayer(`<div class="px sheet"><div style="font-family:var(--f-disp);font-size:1.3rem">${esc(msg)}</div><div class="row"><button class="btn y" id="cfYes">예</button><button class="btn" id="cfNo">아니오</button></div></div>`);
+  const ov=openLayer(`<div class="px sheet"><div style="font-weight:700;font-size:1.05rem">${esc(msg)}</div><div class="row"><button class="btn y" id="cfYes">예</button><button class="btn" id="cfNo">아니오</button></div></div>`);
   ov.querySelector("#cfYes").onclick=()=>{closeLayer();yes()}; ov.querySelector("#cfNo").onclick=closeLayer;
 }
 function limitAlert(msg){
