@@ -193,17 +193,9 @@ function render(){
 function verdict(k,v){ if(v===""||v==null||isNaN(+v)) return ""; return STD.find(s=>s.key===k).test(+v)?"ok":"bad"; }
 function renderStd(){
   const box=$("#stdBox");
-  const key=curDate+(readonly?"r":"");
-  if(box.dataset.h!==key){
-    box.innerHTML = STD.map(s=>{
-      const v=day.measured?.[s.key]??""; const vd=verdict(s.key,v);
-      return `<div class="gauge"><span class="k">${s.name}</span><span class="v">${s.show}</span><span class="u">${s.unit||"수소이온농도"}</span>
-        <input id="std-${s.key}" inputmode="decimal" placeholder="오늘 측정값" value="${esc(v)}" aria-label="${s.name} 오늘 측정값" ${readonly?"readonly":""}>
-        <span class="verdict ${vd||"na"}">${vd==="ok"?"적합":vd==="bad"?"기준 벗어남":"미입력"}</span></div>`}).join("");
-    box.dataset.h=key;
-    STD.forEach(s=>$("#std-"+s.key).addEventListener("input",e=>{day.measured=day.measured||{};day.measured[s.key]=e.target.value.trim();persistDay();
-      const vd=verdict(s.key,e.target.value.trim());const el=e.target.nextElementSibling;el.className="verdict "+(vd||"na");el.textContent=vd==="ok"?"적합":vd==="bad"?"기준 벗어남":"미입력"}));
-  } else STD.forEach(s=>{const i=$("#std-"+s.key);if(document.activeElement!==i)i.value=day.measured?.[s.key]??""});
+  if(box.dataset.h) return;
+  box.innerHTML = STD.map(s=>`<div class="gauge"><span class="k">${s.name}</span><span class="v">${s.show}</span><span class="u">${s.unit||"수소이온농도"}</span></div>`).join("");
+  box.dataset.h="1";
 }
 function renderHud(){
   const t=day.stops.length, dn=day.stops.filter(s=>s.done).length;
@@ -589,8 +581,6 @@ function shareText(){
   let lastOff=null;
   stops.forEach((s,i)=>{const off=officeOf(s)||"관할 미지정"; if(off!==lastOff){t+=`\n■ ${off.replace(" [확인 필요]","")}\n`;lastOff=off}
     t+=`${s.done?"☑":"☐"} ${i+1}. ${s.name}${guOf(s)?` (${guOf(s)}${s.dong?" "+s.dong:""})`:""}\n   ${s.addr||""}\n`});
-  const m=day.measured||{}; const ms=STD.filter(x=>m[x.key]).map(x=>`${x.name} ${m[x.key]}${x.unit}`);
-  if(ms.length) t+=`\n오늘 측정값: ${ms.join(", ")}\n`;
   return t;
 }
 async function ensureShareLink(){
