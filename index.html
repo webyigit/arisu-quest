@@ -264,6 +264,9 @@ details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
 .stop .detail{grid-column:1/-1;display:flex;flex-direction:column;gap:.45rem;border-top:2px dashed var(--shadow);padding-top:.5rem}
 .stop .detail .leg{margin:0;padding:.1rem 0 .1rem .6rem}
 .stop.done .sum{opacity:.6}
+#intakePage{padding-top:.4rem}
+.hud-top .tools{order:3}
+.btn.addq{margin-left:auto;order:2;font-family:var(--f-disp);font-size:1rem;padding:.35rem .8rem;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -271,6 +274,7 @@ details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
   <div class="hud-in">
     <div class="hud-top">
       <div class="logo"><span id="logoAri" aria-hidden="true"></span>아리수 퀘스트</div>
+      <button class="btn y addq" id="intakeBtn" aria-label="의뢰 접수(목록 올리기)">＋ 접수</button>
       <div class="tools">
         <button class="btn ic" id="fontDown" aria-label="글씨 작게">A-</button>
         <button class="btn ic" id="fontUp" aria-label="글씨 크게">A+</button>
@@ -309,8 +313,25 @@ details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
     <p class="src" style="margin:.7rem 0 0">기준: 환경부 먹는물 수질기준 (<a href="https://news.seoul.go.kr/env/?p=565125" target="_blank" rel="noopener">서울시 환경 누리집</a>). 실제 측정값은 <a href="https://arisu.seoul.go.kr/arisumap/" target="_blank" rel="noopener">아리수맵</a>에서 볼 수 있어요.</p>
   </section>
 
+
+  <section class="px" aria-label="오늘의 동선">
+    <div class="px-h"><h2>오늘의 동선</h2><span class="tag" id="questCount">0 / 0</span></div>
+    <div class="route-ctl">
+      <div class="small muted" id="startLabel">출발지: 설정에서 지정 (없으면 첫 장소부터)</div>
+      <button class="btn y" id="routeBtn">동선 짜기</button>
+    </div>
+    <div class="row" style="margin-top:.5rem">
+      <button class="btn sm" id="fillBtn">행정동·좌표 찾기</button>
+      <button class="btn sm ghost" id="clearDay">이 날 목록 비우기</button>
+    </div>
+    <p class="src" style="margin:.5rem 0 0">소요시간은 직선거리 기반 추정치예요. 실제 시간은 각 구간의 길찾기 링크(카카오맵)에서 확인하세요.</p>
+    <div id="routeOut"></div>
+  </section>
+</main>
+<main class="wrap" id="intakePage" hidden>
+  <div class="row"><button class="btn sm" id="intakeBack">◀ 돌아가기</button></div>
   <section class="px" aria-label="의뢰 접수" id="intake">
-    <div class="px-h"><h2>의뢰 접수</h2><span class="tag">NEW QUEST</span></div>
+    <div class="px-h"><h2>의뢰 접수</h2><span class="tag" id="intakeDate">NEW QUEST</span></div>
     <label class="drop" id="drop" for="photo">
       <strong>방문 목록 사진 올리기</strong>
       <span class="small muted">촬영하거나 갤러리에서 고르면 휴대폰 안에서 글자를 읽어 목록으로 만들어요 (무료)</span>
@@ -329,20 +350,6 @@ details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
         <button class="btn" id="manualBtn">한 곳 직접 추가</button></div>
       </div>
     </details>
-  </section>
-
-  <section class="px" aria-label="오늘의 동선">
-    <div class="px-h"><h2>오늘의 동선</h2><span class="tag" id="questCount">0 / 0</span></div>
-    <div class="route-ctl">
-      <div class="small muted" id="startLabel">출발지: 설정에서 지정 (없으면 첫 장소부터)</div>
-      <button class="btn y" id="routeBtn">동선 짜기</button>
-    </div>
-    <div class="row" style="margin-top:.5rem">
-      <button class="btn sm" id="fillBtn">행정동·좌표 찾기</button>
-      <button class="btn sm ghost" id="clearDay">이 날 목록 비우기</button>
-    </div>
-    <p class="src" style="margin:.5rem 0 0">소요시간은 직선거리 기반 추정치예요. 실제 시간은 각 구간의 길찾기 링크(카카오맵)에서 확인하세요.</p>
-    <div id="routeOut"></div>
   </section>
 </main>
 

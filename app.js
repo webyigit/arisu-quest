@@ -210,9 +210,9 @@ function renderRoute(){
   if(!day.stops.length){
     out.innerHTML=`<div class="empty"><div style="width:5rem" class="ari-bob">${ari("sleepy")}</div>
       <div style="font-family:var(--f-disp);font-size:1.3rem">아직 접수된 의뢰가 없어요</div>
-      <div class="small muted">위에서 방문 목록 사진을 올리면 수도사업소별로 동선을 짜 드려요.</div>
-      ${readonly?"":'<button class="btn sm" id="demoBtn">예시로 둘러보기</button>'}</div>`;
-    const db=$("#demoBtn"); if(db) db.onclick=loadDemo; return;
+      <div class="small muted">오른쪽 위 "＋ 접수"로 방문 목록 사진을 올리면 수도사업소별로 동선을 짜 드려요.</div>
+      ${readonly?"":'<div class="row" style="justify-content:center"><button class="btn y sm" id="emptyAdd">＋ 접수하기</button><button class="btn sm" id="demoBtn">예시로 둘러보기</button></div>'}</div>`;
+    const db=$("#demoBtn"); if(db) db.onclick=loadDemo; const ea=$("#emptyAdd"); if(ea) ea.onclick=()=>showIntake(true); return;
   }
   const stops=[...day.stops].sort((a,b)=>(a.order??0)-(b.order??0));
   const show=s=>(view.st==="all"||(view.st==="todo"?!s.done:s.done))&&(!view.gu||guOf(s)===view.gu);
@@ -365,7 +365,7 @@ function editStop(s, isNew){
     if(changedXY) s.xyEst=false;
     if(!changedXY && oldAddr!==s.addr){ s.lat=null; s.lng=null; }
     if(g("#ed-dong")) s.dongSure=true;
-    if(isNew){s.order=day.stops.length;day.stops.push(s)}
+    if(isNew){s.order=day.stops.length;day.stops.push(s);showIntake(false)}
     persistDay(); closeLayer(); render(); toast("저장했어요");
     if(!hasXY(s)&&s.addr) geocodeStops([s]);
   });
@@ -527,10 +527,20 @@ function addRows(rows){
   rows.forEach((r,i)=>r.order=day.stops.length+i); day.stops.push(...rows); day.routed=false;
   planRoute(); persistDay(); render(); blip();
   toast(`의뢰 ${rows.length}건 접수. 좌표를 찾는 중이에요`);
+  showIntake(false);
   $("#routeOut").scrollIntoView({behavior:"smooth",block:"start"});
   geocodeStops(rows);
 }
 $("#manualBtn").onclick=()=>editStop(null,true);
+
+/* ---------- 의뢰 접수 페이지 ---------- */
+function showIntake(on){
+  $("#app").hidden=on; $("#intakePage").hidden=!on;
+  if(on){ const d=new Date(curDate+"T12:00:00"); $("#intakeDate").textContent=`${d.getMonth()+1}/${d.getDate()} ${WD[d.getDay()]}`; }
+  window.scrollTo(0,0);
+}
+$("#intakeBtn").onclick=()=>showIntake(true);
+$("#intakeBack").onclick=()=>showIntake(false);
 
 /* ---------- 무료 지도(OpenStreetMap)로 좌표·행정동 찾기 ---------- */
 // Nominatim 이용 정책: 초당 1건 이하, 결과는 기기에 저장해 다시 묻지 않음
@@ -710,7 +720,7 @@ async function afterLogin(u){
 async function openShared(tok){
   readonly=true;
   document.body.classList.add("readonly");
-  $("#intake").hidden=true; $("#routeBtn").hidden=true; $("#fillBtn").hidden=true; $("#clearDay").hidden=true;
+  $("#intakeBtn").hidden=true; $("#routeBtn").hidden=true; $("#fillBtn").hidden=true; $("#clearDay").hidden=true;
   $("#prevDay").hidden=true; $("#nextDay").hidden=true; $("#todayBtn").hidden=true; $("#datePick").hidden=true; $("#setBtn").hidden=true;
   const b=$("#sharedBanner"); b.hidden=false; b.innerHTML=`<strong>공유받은 목록이에요</strong><div class="small">보기만 할 수 있어요. 내 일정을 관리하려면 <a href="${location.pathname}">여기서 로그인</a>하세요.</div>`;
   const {data,error}=await sb.rpc("get_shared_day",{p_token:tok});
