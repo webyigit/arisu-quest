@@ -1,0 +1,49 @@
+/* 시안 6 · 네이버 스타일: 네이버 그린(#03C75A, 네이버 브랜드 가이드), 나눔스퀘어 네오, 초록 테두리 알약형 "검색창" 접수 버튼, 1px 테두리 카드(8px), 버튼 6px */
+@import url("https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css");
+:root{
+  --bg:#F5F6F7; --panel:#FFFFFF; --bg2:#F5F5F5; --ink:#222222; --muted:#555555; --faint:#888888; --line:#E5E5E5;
+  --accent:#03C75A; --accent-ink:#FFFFFF; --accent-soft:#E0F8EC; --water:#1EBCD2; --ok:#03C75A; --warn:#FF9500; --bad:#FF3838;
+  --f-body:"NanumSquareNeo","NanumSquare","Pretendard Variable",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101012; --panel:#171719; --bg2:#222225; --ink:#F2F2F4; --muted:#B5B5BA; --faint:#88888E; --line:#2C2C30; --accent-soft:#0C3A22}}
+:root[data-theme="dark"]{
+  --bg:#101012; --panel:#171719; --bg2:#222225; --ink:#F2F2F4; --muted:#B5B5BA; --faint:#88888E; --line:#2C2C30; --accent-soft:#0C3A22}
+body{letter-spacing:-.02em;font-weight:500}
+.hud{background:var(--panel);border-bottom:1px solid var(--line);backdrop-filter:none}
+.hud-top{flex-wrap:wrap;row-gap:.6rem}
+.logo{font-size:1.45rem;font-weight:900;color:var(--accent);letter-spacing:-.04em}
+/* 시그니처: 초록 테두리 알약 검색창 모양 */
+.hud .btn.addq{order:5;flex:1 0 100%;justify-content:flex-start;background:var(--panel);color:var(--faint);border:2px solid var(--accent);border-radius:9999px;
+  min-height:3rem;padding:0 1.1rem;font-weight:700;font-size:1rem;box-shadow:0 5px 18px rgba(3,199,90,.10)}
+.hud .btn.addq::after{content:"사진으로 방문지 접수";margin-left:.5rem;font-weight:500;color:var(--faint)}
+.hud .ic{background:transparent;border:0;color:var(--muted)}
+.bar{height:5px;background:var(--bg2)}
+.bar b{background:var(--accent)}
+.px{border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.px-h h2{font-size:1.15rem;font-weight:800}
+.btn{border-radius:6px;border:1px solid var(--line);background:var(--panel);font-weight:700;min-height:2.6rem}
+.btn.y,.btn.b{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.ghost{border:0;background:transparent;color:var(--accent)}
+.btn.sm{border-radius:6px}
+.ari-card{border-color:var(--accent-soft);background:var(--accent-soft)}
+.gauge{border:1px solid var(--line);background:var(--panel);border-radius:6px}
+.gauge .v{color:var(--accent)}
+.fchip{border-radius:9999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-weight:700}
+.fchip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.fchip.ghost{border:0;color:var(--faint)}
+.office-h{font-weight:800}
+.list{border-top:1px solid var(--ink)}
+.stop{padding:.5rem .1rem}
+.chk{border-radius:4px;width:1.35rem;height:1.35rem;border:1px solid var(--line);background:var(--panel)}
+.chk:checked{background:var(--accent);border-color:var(--accent)}
+.nm,.stop .nm{font-weight:800}
+.stop .eta{color:var(--accent);font-weight:800}
+.stop .detail{border-radius:8px;background:var(--bg)}
+.chip{border-radius:4px;font-weight:700;background:var(--panel);border:1px solid var(--line)}
+.chip.of{background:var(--accent-soft);color:#02A848;border-color:transparent}
+.term,.sheet{border-radius:12px}
+.term .opt{border-radius:6px;border:1px solid var(--line);background:var(--panel)}
+.term .opt:first-child{background:var(--accent);color:#fff;border-color:var(--accent)}
+.auth-go{background:var(--accent)!important}
+.toast{border-radius:6px}

@@ -1,0 +1,49 @@
+/* 시안 7 · 카카오톡 스타일: 채팅방 배경(#B2C7DA), 받은 말풍선 같은 흰 카드(14~18px), 카카오 옐로(#FEE500) 버튼에 검은 글자 85%(카카오 로그인 가이드), 하단 탭 바 */
+:root{
+  --bg:#B2C7DA; --panel:#FFFFFF; --bg2:#F2F2F2; --ink:#191919; --muted:#555555; --faint:#888888; --line:#E6E6E6;
+  --accent:#FEE500; --accent-ink:rgba(0,0,0,.85); --accent-soft:#FFF8B8; --brown:#4A2D17; --water:#2563EB; --ok:#1AAD5C; --warn:#B8A500; --bad:#FF3838;
+  --f-body:"Pretendard Variable",-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1F1F1F; --panel:#2D2D2D; --bg2:#3A3A3A; --ink:#F2F2F2; --muted:#BDBDBD; --faint:#8C8C8C; --line:#3A3A3A; --accent-soft:#4A4300; --brown:#FEE500}}
+:root[data-theme="dark"]{
+  --bg:#1F1F1F; --panel:#2D2D2D; --bg2:#3A3A3A; --ink:#F2F2F2; --muted:#BDBDBD; --faint:#8C8C8C; --line:#3A3A3A; --accent-soft:#4A4300; --brown:#FEE500}
+body{font-weight:500;letter-spacing:-.01em}
+.wrap{padding-bottom:6.5rem;gap:10px}
+/* 상단 바: 채팅방 제목처럼 */
+.hud{background:var(--bg);backdrop-filter:none}
+.logo{font-size:1.15rem;font-weight:800}
+.hud .btn.addq{background:var(--accent);color:var(--accent-ink);border-radius:12px;font-weight:700}
+.bar{height:4px;background:rgba(0,0,0,.08)}
+.bar b{background:var(--brown)}
+/* 하단 탭 바 */
+.hud .tools{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:space-around;background:var(--panel);border-top:1px solid var(--line);
+  padding:.35rem 0 calc(.35rem + env(safe-area-inset-bottom,0px))}
+.hud .ic{background:transparent;border:0;color:var(--muted);width:3.2rem;height:2.8rem;font-size:1.05rem}
+/* 말풍선 카드 */
+.px{border-radius:18px;padding:16px}
+.ari-card{background:transparent;padding:0}
+.ari-btn{width:2.8rem;background:var(--panel);border-radius:16px;padding:.25rem}
+.bubble{background:var(--panel);border-radius:4px 14px 14px 14px;padding:.6rem .85rem;max-width:80%}
+.px-h h2{font-size:1.06rem;font-weight:700}
+.btn{border-radius:12px;background:var(--bg2);font-weight:700}
+.btn.y,.btn.b{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--bad)}
+.gauge{background:var(--bg2);border-radius:14px}
+.fchip{background:var(--bg2);color:var(--muted);font-weight:700}
+.fchip.on{background:var(--accent);color:var(--accent-ink)}
+.fchip.ghost{background:none}
+.office-h .sw{width:.7rem;height:.7rem}
+.list{border-top:0;gap:6px}
+.stop{border-bottom:0;background:var(--bg2);border-radius:14px;padding:.4rem .6rem}
+.stop.done{background:var(--accent-soft)}
+.chk{width:1.5rem;height:1.5rem;border:2px solid var(--faint)}
+.chk:checked{background:var(--brown);border-color:var(--brown)}
+.chk:checked::after{border-color:var(--accent)}
+.stop .detail{background:var(--panel);border-radius:14px}
+.chip{background:var(--bg2);color:var(--ink)}
+.chip.of{background:var(--accent);color:var(--accent-ink)}
+.term,.sheet{border-radius:18px}
+.term .opt{border-radius:12px}
+.term .opt:first-child,.auth-go{background:var(--accent)!important;color:var(--accent-ink)!important}
+.toast{border-radius:14px;bottom:calc(4.5rem + env(safe-area-inset-bottom,0px))}

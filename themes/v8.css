@@ -1,0 +1,55 @@
+/* 시안 8 · 이마트 스타일: 매장 가격표처럼 노란 바탕(브랜드 대표색 노랑, 정확한 색상코드는 공개 가이드 없음 [확인 필요]) + 검정, 굵은 글자, 노란 태그형 수치 */
+:root{
+  --bg:#FFFFFF; --panel:#FFFFFF; --bg2:#F3F3F3; --ink:#111111; --muted:#444444; --faint:#777777; --line:#111111;
+  --accent:#FFD200; --accent-ink:#111111; --accent-soft:#FFF4B3; --water:#0B5CAD; --ok:#111111; --warn:#B25B00; --bad:#D6001C;
+  --f-body:"Pretendard Variable",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111111; --panel:#1B1B1B; --bg2:#262626; --ink:#F5F5F5; --muted:#CFCFCF; --faint:#9A9A9A; --line:#F5F5F5; --accent-soft:#3D3400; --water:#7DB5F0}}
+:root[data-theme="dark"]{
+  --bg:#111111; --panel:#1B1B1B; --bg2:#262626; --ink:#F5F5F5; --muted:#CFCFCF; --faint:#9A9A9A; --line:#F5F5F5; --accent-soft:#3D3400; --water:#7DB5F0}
+body{font-weight:500;letter-spacing:-.02em}
+/* 노란 헤더 */
+.hud{background:var(--accent);color:#111;backdrop-filter:none}
+.logo{font-size:1.3rem;font-weight:900;color:#111}
+.hud .btn.addq{background:#111;color:var(--accent);border-radius:4px;font-weight:800}
+.hud .ic{background:transparent;border:0;color:#111}
+.exp{color:#111}
+.bar{height:8px;background:rgba(0,0,0,.15);border-radius:0}
+.bar b{background:#111;border-radius:0}
+.coins{color:#111}
+.wrap{gap:0;padding:0 0 4rem}
+.px{border-radius:0;border-bottom:8px solid var(--bg2);padding:18px 16px}
+/* 제목: 노란 형광펜 밑줄 */
+.px-h h2{font-size:1.3rem;font-weight:900;background:linear-gradient(transparent 58%,var(--accent) 58%);display:inline;padding:0 .1rem}
+.ari-card{background:var(--accent-soft)}
+.bubble{font-weight:700}
+.btn{border-radius:4px;border:2px solid var(--line);background:var(--panel);font-weight:800}
+.btn.y,.btn.b{background:var(--accent);color:#111;border-color:#111}
+.btn.ghost{border:0;background:transparent;text-decoration:underline}
+.btn.sm{border-radius:4px}
+.date-big{font-weight:900}
+/* 가격표처럼 */
+.gauge{background:var(--accent);color:#111;border-radius:0;border:2px solid #111;position:relative}
+.gauge .k,.gauge .u{color:#111}
+.gauge .v{font-size:1.2rem;font-weight:900;white-space:nowrap;letter-spacing:-.04em}
+.fchip{border-radius:4px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-weight:800}
+.fchip.on{background:#111;color:var(--accent);border-color:#111}
+.fchip.ghost{border:0}
+.office-h{font-weight:900;font-size:1rem;background:#111;color:var(--accent);padding:.4rem .6rem}
+.office-h .cnt,.office-h .caret{color:var(--accent)}
+.list{border-top:0}
+.stop{border-bottom:1px solid var(--bg2)}
+.stop.done .nm{text-decoration:none;color:var(--ink);background:linear-gradient(transparent 55%,var(--accent) 55%)}
+.chk{border-radius:2px;border:2px solid var(--line);width:1.5rem;height:1.5rem}
+.chk:checked{background:var(--accent);border-color:#111}
+.chk:checked::after{border-color:#111}
+.nm,.stop .nm{font-weight:800}
+.stop .eta{color:var(--ink);font-weight:800}
+.stop .detail{border-radius:0;border:2px solid var(--line);background:var(--panel)}
+.chip{border-radius:2px;background:var(--bg2);color:var(--ink);font-weight:800}
+.chip.of{background:var(--accent);color:#111}
+.term,.sheet{border-radius:0;border:3px solid #111}
+.term .opt{border-radius:4px;border:2px solid #111;background:var(--panel)}
+.term .opt:first-child,.auth-go{background:var(--accent)!important;color:#111!important}
+.toast{border-radius:0;background:#111;color:var(--accent)}
