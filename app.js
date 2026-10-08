@@ -14,7 +14,6 @@ const DEFAULT_MAP = "강서구=강서수도사업소 [확인 필요]\n양천구=
 /* ---------- Supabase 무료 플랜 한도 ---------- */
 // 출처: https://supabase.com/docs/guides/platform/billing-on-supabase (2026-10-08 확인)
 const WARN_AT = 0.8;
-const ID_DOMAIN = "users.arisu-quest.app";
 
 const LS = {
   get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
@@ -307,7 +306,7 @@ function editStop(s, isNew){
 function openSettings(){
   const st=settings.start||{};
   const ov=openLayer(`<form class="px sheet" id="setForm"><div class="px-h"><h2>설정</h2><span class="tag">OPTION</span></div>
-    <div class="small muted">${user?`접속 아이디: <b>${esc(idOf(user))}</b>`:""}</div>
+    <div class="small muted">${user?`접속 계정: <b>${esc(idOf(user))}</b>`:""}</div>
     <label>출발지 이름<input class="inp" id="st-name" value="${esc(st.name||"")}" placeholder="예) 사무실"></label>
     <label>출발지 주소<input class="inp" id="st-addr" value="${esc(st.addr||"")}"></label>
     <div class="grid2"><label>출발지 위도<input class="inp" id="st-lat" inputmode="decimal" value="${esc(st.lat??"")}"></label>
@@ -581,32 +580,33 @@ async function checkUsage(show){
 }
 
 /* ---------- 로그인 ---------- */
-function idOf(u){return String(u.email||"").split("@")[0]}
+function idOf(u){return String(u.email||"")}
 function authScreen(msg){
   const ov=openLayer(`<form class="term" id="authForm" autocomplete="on"><div class="t-h"><span>ARISU QUEST</span><span>LOGIN</span></div>
     <div class="typed" id="typed" style="min-height:4.5rem"></div>
     <div class="opts">
-      <label class="small" for="au-id" style="color:#FFD23F">아이디 (영문·숫자)</label>
-      <input class="inp" id="au-id" autocomplete="username" required pattern="[A-Za-z0-9_.\\-]{3,30}" style="background:#151236;color:#E8FFE9;border-color:#3D3A7A">
+      <label class="small" for="au-id" style="color:#FFD23F">이메일</label>
+      <input class="inp" id="au-id" type="email" inputmode="email" autocomplete="email" autocapitalize="off" required style="background:#151236;color:#E8FFE9;border-color:#3D3A7A">
       <label class="small" for="au-pw" style="color:#FFD23F">비밀번호 (6자 이상)</label>
       <input class="inp" id="au-pw" type="password" autocomplete="current-password" required minlength="6" style="background:#151236;color:#E8FFE9;border-color:#3D3A7A">
       <div class="small" id="au-msg" style="color:#FF8FA3;min-height:1.2rem">${esc(msg||"")}</div>
       <button class="opt" type="submit" id="au-in">로그인</button>
       <button class="opt" type="button" id="au-up">처음이에요 (가입하기)</button>
     </div></form>`, true);
-  typeLines(ov.querySelector("#typed"),"요원 확인이 필요합니다.\n아이디와 비밀번호를 입력하세요.");
+  typeLines(ov.querySelector("#typed"),"요원 확인이 필요합니다.\n이메일과 비밀번호를 입력하세요.");
   const go=async(mode)=>{
     const id=ov.querySelector("#au-id").value.trim().toLowerCase(), pw=ov.querySelector("#au-pw").value;
     const msgEl=ov.querySelector("#au-msg");
-    if(!/^[a-z0-9_.\-]{3,30}$/.test(id)){msgEl.textContent="아이디는 영문·숫자 3자 이상이에요";return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id)){msgEl.textContent="이메일 주소를 정확히 넣어 주세요";return}
     if(pw.length<6){msgEl.textContent="비밀번호는 6자 이상이에요";return}
     msgEl.textContent="확인 중...";
-    const email=id+"@"+ID_DOMAIN;
+    const email=id;
     const r = mode==="up" ? await sb.auth.signUp({email,password:pw}) : await sb.auth.signInWithPassword({email,password:pw});
     if(r.error){
       const m=r.error.message||"";
-      msgEl.textContent = /already|registered/i.test(m)?"이미 있는 아이디예요. 로그인해 주세요"
-        : /Invalid login/i.test(m)?"아이디나 비밀번호가 맞지 않아요"
+      msgEl.textContent = /already|registered/i.test(m)?"이미 가입된 이메일이에요. 로그인해 주세요"
+        : /Invalid login/i.test(m)?"이메일이나 비밀번호가 맞지 않아요"
+        : /invalid/i.test(m)?"이 이메일 주소는 쓸 수 없어요. 실제 쓰는 이메일로 넣어 주세요"
         : /rate|limit|429/i.test(m)?"요청이 많아요. 잠시 후 다시 시도해 주세요"
         : "로그인하지 못했어요: "+m;
       return;
