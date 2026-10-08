@@ -131,6 +131,47 @@ function nn(list,start){
   return out.concat(no);
 }
 
+/* ---------- 캐릭터 아리 ---------- */
+const ARI_BASE=["......BB......",".....BLLB.....","....BLWLLB....","...BLWLLLLB...","..BLWLLLLLLB..",".BLLLLLLLLLLB.",".BLLLLLLLLLLB.",
+"BLLLKLLLLKLLLB","BLLLKLLLLKLLLB","BLPPLLMMLLPPLB","BLLLLLLLLLLLLB",".BLLLLLLLLLLB.","..BLLLLLLLLB..","...BBBBBBBB..."];
+function ari(mood){
+  const g=ARI_BASE.map(r=>r.split(""));
+  if(mood==="happy"){ g[7]="BLLLKLLLLKLLLB".split(""); g[8]="BLLKLKLLKLKLLB".split(""); g[7][4]="L";g[7][9]="L";g[7][4]="K";g[7][9]="K"; g[8][4]="L"; g[8][9]="L"; g[9]="BLPPLMLLMLPPLB".split(""); g[10]="BLLLLLMMLLLLLB".split(""); }
+  if(mood==="sleepy"){ g[7]="BLLLLLLLLLLLLB".split(""); g[8]="BLLKKLLLLKKLLB".split(""); }
+  const col={B:"#3D7FB5",L:"#9EDCFF",W:"#FFFFFF",K:"#3A2450",P:"#FF9CC2",M:"#3A2450"};
+  let r="";g.forEach((row,y)=>row.forEach((c,x)=>{if(col[c])r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${col[c]}"/>`}));
+  return `<svg viewBox="0 0 14 14" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+const CHEERS=["오늘도 맑은 물 지키러 가자!","물 한 잔 마시고 가요 ♥","천천히 해도 괜찮아","너무 잘하고 있어!","아리가 응원할게 ♥","오늘 날씨처럼 맑은 하루!"];
+let ariMoodTimer=null;
+function ariSay(text, mood, sub){
+  const b=$("#ariBtn"); if(!b) return;
+  b.innerHTML=`<div class="ari-bob">${ari(mood||"normal")}</div>`;
+  $("#ariSay").innerHTML=esc(text)+(sub?`<small>${esc(sub)}</small>`:"");
+}
+function ariStatus(){
+  if(readonly) return ariSay("공유받은 목록이야! 보기만 할 수 있어.","normal");
+  const t=day.stops.length, left=day.stops.filter(s=>!s.done).length;
+  if(!t) return ariSay("안녕! 나는 물방울 아리야. 오늘 갈 곳 사진을 올려 줘!","normal","사진을 올리면 목록이랑 동선을 만들어 줄게");
+  if(!left) return ariSay("오늘 의뢰 다 끝났다! 최고야 ♥","happy","푹 쉬어요");
+  ariSay(`남은 의뢰 ${left}건! ${CHEERS[new Date().getDate()%CHEERS.length]}`, left===t?"normal":"happy", `완료 ${t-left} / ${t}`);
+}
+function ariJump(text){
+  const b=$("#ariBtn"); if(!b) return;
+  clearTimeout(ariMoodTimer);
+  b.innerHTML=`<div class="ari-jump">${ari("happy")}</div>`;
+  if(text) $("#ariSay").textContent=text;
+  hearts(b,5);
+  ariMoodTimer=setTimeout(ariStatus,2200);
+}
+function hearts(el,n){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const r=el.getBoundingClientRect();
+  for(let i=0;i<n;i++){const h=document.createElement("span");h.className="heart";h.textContent="\u2665";
+    h.style.left=(r.left+r.width/2-8+(Math.random()*40-20))+"px";h.style.top=(r.top+10)+"px";document.body.appendChild(h);
+    h.animate([{transform:"translateY(0) scale(.6)",opacity:1},{transform:`translate(${Math.random()*40-20}px,-70px) scale(1.2)`,opacity:0}],{duration:900+i*120,easing:"ease-out"}).onfinish=()=>h.remove();}
+}
+
 /* ---------- 렌더 ---------- */
 const WD=["일","월","화","수","목","금","토"];
 function isDark(){return settings.theme? settings.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches}
@@ -142,7 +183,8 @@ function render(){
   $("#dateLabel").textContent = `${d.getMonth()+1}월 ${d.getDate()}일 (${WD[d.getDay()]})`;
   $("#dateSub").textContent = readonly ? "공유받은 목록" : curDate===todayStr()?"오늘의 의뢰":(curDate<todayStr()?"지난 의뢰":"예정 의뢰");
   $("#datePick").value=curDate;
-  renderStd(); renderRoute(); renderHud();
+  renderStd(); renderRoute(); renderHud(); ariStatus();
+  const la=$("#logoAri"); if(la&&!la.innerHTML) la.innerHTML=`<span class="ari-s" style="display:inline-block;width:1.9rem">${ari("happy")}</span>`;
   const st=settings.start;
   $("#startLabel").textContent = st&&(st.name||st.addr) ? `출발지: ${st.name||st.addr}${hasXY(st)?"":" (좌표 없음)"}` : "출발지: 설정에서 지정 (없으면 서쪽 끝 장소부터)";
 }
@@ -172,7 +214,7 @@ const OFF_COL=["var(--taxi)","var(--water)","var(--pink)","var(--ok)"];
 function renderRoute(){
   const out=$("#routeOut");
   if(!day.stops.length){
-    out.innerHTML=`<div class="empty">${pixTaxi()}
+    out.innerHTML=`<div class="empty"><div style="width:5rem" class="ari-bob">${ari("sleepy")}</div>
       <div style="font-family:var(--f-disp);font-size:1.3rem">아직 접수된 의뢰가 없어요</div>
       <div class="small muted">위에서 방문 목록 사진을 올리면 수도사업소별로 동선을 짜 드려요.</div>
       ${readonly?"":'<button class="btn sm" id="demoBtn">예시로 둘러보기</button>'}</div>`;
@@ -243,7 +285,7 @@ $("#routeOut").addEventListener("change",e=>{
     s.done=e.target.checked; s.doneAt=s.done?new Date().toISOString():null;
     if(!s.example){settings.coins=Math.max(0,(settings.coins||0)+(s.done?1:-1)); persistSettings();}
     persistDay(); render();
-    if(s.done){ const st=$("#stamp-"+s.id); if(st) st.classList.add("pop"); blip(); burst($(`[data-id="${s.id}"]`));
+    if(s.done){ const st=$("#stamp-"+s.id); if(st) st.classList.add("pop"); blip(); burst($(`[data-id="${s.id}"]`)); ariJump(`${s.name} 완료! 잘했어 ♥`);
       if(day.stops.every(x=>x.done)) setTimeout(allClear,500); }
   }
 });
@@ -275,7 +317,7 @@ function confirmBox(msg,yes){
 }
 function limitAlert(msg){
   const b=$("#limitBanner"); b.hidden=false; b.innerHTML=`<strong>사용량 알림</strong><div>${esc(msg)}</div>`;
-  const ov=openLayer(`<div class="term"><div class="t-h"><span>WARNING</span><span>LIMIT</span></div><div class="typed" style="min-height:0">${esc(msg)}</div><div class="opts"><button class="opt" id="ok">확인</button></div></div>`);
+  const ov=openLayer(`<div class="term"><div class="t-h"><span>WARNING</span><span>LIMIT</span></div><div class="t-ari">${ari("sleepy")}</div><div class="typed" style="min-height:0">${esc(msg)}</div><div class="opts"><button class="opt" id="ok">확인</button></div></div>`);
   ov.querySelector("#ok").onclick=closeLayer; tone(220,.25,0,"square",.05); tone(180,.3,.25,"square",.05);
 }
 function editStop(s, isNew){
@@ -344,19 +386,20 @@ function maybeIntro(){
   if(readonly||curDate!==todayStr()||$("#layer").innerHTML) return;
   const key="aq_intro_"+curDate; if(LS.get(key)) return; LS.set(key,1);
   const n=day.stops.length, left=day.stops.filter(s=>!s.done).length;
-  const msg = n? `오늘 날짜로 의뢰 ${n}건이 접수되어 있습니다.\n남은 의뢰 ${left}건.\n출동하시겠습니까?` : `새로운 하루가 시작되었습니다.\n오늘의 방문 목록을 전달받으면\n의뢰서를 촬영해 올려 주세요.`;
+  const msg = n? `좋은 하루! 아리야.\n오늘 의뢰가 ${n}건 있어. 남은 건 ${left}건!\n같이 출발해 볼까?` : `좋은 하루! 아리야.\n오늘 방문 목록을 받으면\n사진으로 찍어서 올려 줘!`;
   const ov=openLayer(`<div class="term"><div class="t-h"><span>ARISU QUEST</span><span>${curDate.replace(/-/g,".")}</span></div>
+    <div class="t-ari ari-bob">${ari(n?"happy":"normal")}</div>
     <div class="typed" id="typed"></div>
-    <div class="opts" id="opts" hidden><button class="opt" id="goYes">${n?"예, 출동합니다":"의뢰서 올리러 가기"}</button><button class="opt" id="goNo">잠시 후에</button></div></div>`);
+    <div class="opts" id="opts" hidden><button class="opt" id="goYes">${n?"응, 출발!":"사진 올리러 가기"}</button><button class="opt" id="goNo">조금 이따가</button></div></div>`);
   typeLines(ov.querySelector("#typed"),msg,()=>{ov.querySelector("#opts").hidden=false;ov.querySelector("#goYes").focus()});
   ov.querySelector("#goYes").onclick=()=>{closeLayer(); blip(); (n?$("#routeOut"):$("#drop")).scrollIntoView({behavior:"smooth",block:"center"})};
   ov.querySelector("#goNo").onclick=closeLayer;
 }
 function allClear(){
   const ov=openLayer(`<div class="term" style="text-align:center"><div class="t-h"><span>STAGE ${curDate.slice(5).replace("-",".")}</span><span>●${settings.coins}</span></div>
-    <div class="clear-banner">ALL CLEAR!</div><div class="typed" id="typed" style="min-height:3rem;margin-top:1rem"></div>
-    <div class="opts"><button class="opt" id="ok">수고하셨습니다</button></div></div>`);
-  typeLines(ov.querySelector("#typed"),`오늘의 의뢰 ${day.stops.length}건 모두 완료.\n푹 쉬세요!`);
+    <div class="t-ari ari-jump">${ari("happy")}</div><div class="clear-banner">ALL CLEAR!</div><div class="typed" id="typed" style="min-height:3rem;margin-top:1rem"></div>
+    <div class="opts"><button class="opt" id="ok">고마워 아리!</button></div></div>`);
+  typeLines(ov.querySelector("#typed"),`오늘 의뢰 ${day.stops.length}건 모두 끝!\n수고했어, 푹 쉬어 ♥`);
   ov.querySelector("#ok").onclick=closeLayer; fanfare(); burst(null,60);
 }
 let actx=null;
@@ -372,7 +415,7 @@ function fanfare(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.16,i*.12))
 function burst(el,count=18){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const fx=$("#fx"); const r=el?el.getBoundingClientRect():{left:innerWidth/2-50,top:innerHeight/2-50,width:100,height:100};
-  const cols=["var(--taxi)","var(--water)","var(--pink)","var(--ok)"];
+  const cols=["var(--taxi)","var(--water)","var(--pink)","#FFD66B"];
   for(let i=0;i<count;i++){const p=document.createElement("i");const sz=6+Math.random()*6;
     p.style.cssText=`position:fixed;width:${sz}px;height:${sz}px;background:${cols[i%4]};left:${r.left+r.width/2}px;top:${r.top+r.height/2}px`;
     fx.appendChild(p); const a=Math.random()*Math.PI*2,v=60+Math.random()*140;
@@ -584,25 +627,26 @@ function idOf(u){return String(u.email||"")}
 function authScreen(msg, mode){
   mode = mode||"in";
   const up = mode==="up";
-  const inStyle='style="background:#151236;color:#E8FFE9;border-color:#3D3A7A"';
+  const inStyle="";
   const ov=openLayer(`<form class="term" id="authForm" autocomplete="on"><div class="t-h"><span>ARISU QUEST</span><span>${up?"NEW AGENT":"LOGIN"}</span></div>
     <div class="auth-tabs" role="tablist">
       <button type="button" role="tab" class="auth-tab ${up?"":"on"}" aria-selected="${!up}" id="tabIn">로그인</button>
       <button type="button" role="tab" class="auth-tab ${up?"on":""}" aria-selected="${up}" id="tabUp">회원가입</button>
     </div>
+    <div class="t-ari ari-bob">${ari(up?"happy":"normal")}</div>
     <div class="typed" id="typed" style="min-height:3.2rem"></div>
     <div class="opts">
-      <label class="small" for="au-id" style="color:#FFD23F">이메일</label>
+      <label class="small" for="au-id">이메일</label>
       <input class="inp" id="au-id" type="email" inputmode="email" autocomplete="email" autocapitalize="off" required ${inStyle}>
-      <label class="small" for="au-pw" style="color:#FFD23F">비밀번호${up?" (6자 이상)":""}</label>
+      <label class="small" for="au-pw">비밀번호${up?" (6자 이상)":""}</label>
       <input class="inp" id="au-pw" type="password" autocomplete="${up?"new-password":"current-password"}" required minlength="6" ${inStyle}>
-      ${up?`<label class="small" for="au-pw2" style="color:#FFD23F">비밀번호 한 번 더</label>
+      ${up?`<label class="small" for="au-pw2">비밀번호 한 번 더</label>
       <input class="inp" id="au-pw2" type="password" autocomplete="new-password" required minlength="6" ${inStyle}>`:""}
-      <div class="small" id="au-msg" style="color:#FF8FA3;min-height:1.2rem">${esc(msg||"")}</div>
+      <div class="small" id="au-msg" style="min-height:1.2rem">${esc(msg||"")}</div>
       <button class="opt auth-go" type="submit">${up?"가입하고 시작하기":"로그인"}</button>
       <button class="auth-link" type="button" id="au-switch">${up?"이미 계정이 있어요 · 로그인":"처음이세요? 회원가입"}</button>
     </div></form>`, true);
-  typeLines(ov.querySelector("#typed"), up?"신규 요원 등록.\n쓰시는 이메일과 비밀번호를 정해 주세요.":"요원 확인이 필요합니다.\n이메일과 비밀번호를 입력하세요.");
+  typeLines(ov.querySelector("#typed"), up?"반가워! 나는 아리야.\n쓰는 이메일로 가입해 줘.":"다시 왔구나! 아리야.\n이메일로 로그인해 줘.");
   const sw=()=>authScreen("", up?"in":"up");
   ov.querySelector("#au-switch").onclick=sw;
   ov.querySelector(up?"#tabIn":"#tabUp").onclick=sw;
@@ -652,6 +696,7 @@ async function openShared(tok){
 }
 
 /* ---------- 상단 버튼 ---------- */
+$("#ariBtn").onclick=()=>{ tone(1047,.08); tone(1319,.12,.08); ariJump(CHEERS[Math.floor(Math.random()*CHEERS.length)]); };
 $("#fontUp").onclick=()=>{settings.scale=Math.min(1.7,+(settings.scale+.1).toFixed(2));persistSettings();render()};
 $("#fontDown").onclick=()=>{settings.scale=Math.max(.9,+(settings.scale-.1).toFixed(2));persistSettings();render()};
 $("#themeBtn").onclick=()=>{settings.theme=isDark()?"light":"dark";persistSettings();render()};

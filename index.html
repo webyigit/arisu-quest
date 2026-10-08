@@ -3,41 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0D0B22">
+<meta name="theme-color" content="#FF8DB5">
 <meta name="description" content="아리수 수질검사 방문지를 사진으로 접수하고 수도사업소별 동선과 완료 체크를 관리하는 일정 앱">
 <title>아리수 퀘스트</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1:wght@400;600;800&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Jua&family=Gothic+A1:wght@400;600;800&family=Press+Start+2P&display=swap">
 <style>
-/* 레이아웃: 레트로 게임 의뢰 단말기. 픽셀 테두리 패널을 한 줄로 쌓는 모바일 단일 컬럼, HUD는 상단 고정 */
+/* 레이아웃: 물방울 캐릭터 "아리"가 안내하는 파스텔 게임 다이어리. 둥근 카드를 한 줄로 쌓는 모바일 단일 컬럼, HUD는 상단 고정 */
 :root{
-  --bg:#E6EDFA; --bg2:#D7E1F5; --panel:#FFFFFF; --ink:#17163C; --muted:#585C86;
-  --line:#17163C; --shadow:#17163C; --taxi:#F2B200; --taxi-ink:#17163C;
-  --water:#0B7FC4; --pink:#D63B74; --ok:#12895A; --warn:#B86E00; --bad:#C93434;
-  --chip:#EEF2FC; --scan:rgba(23,22,60,.035);
-  --f-disp:"Do Hyeon","Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --bg:#FFF1F6; --bg2:#FFE4EF; --panel:#FFFFFF; --ink:#4B2A5A; --muted:#86668F;
+  --line:#4B2A5A; --shadow:#F4B5CE; --taxi:#FF8DB5; --taxi-ink:#4B2A5A;
+  --water:#2E9BD6; --pink:#9B6FE6; --ok:#1F9E77; --warn:#B86A00; --bad:#D9384F;
+  --chip:#FFF0F6; --scan:rgba(255,141,181,.22);
+  --f-disp:"Jua","Do Hyeon","Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --f-body:"Gothic A1","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --f-pix:"Press Start 2P","Do Hyeon",monospace;
   --scale:1.15;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0D0B22; --bg2:#151236; --panel:#1B1842; --ink:#EEEBFF; --muted:#A9A5DA;
-  --line:#6C66D9; --shadow:#000000; --taxi:#FFD23F; --taxi-ink:#17163C;
-  --water:#41CFFF; --pink:#FF63A5; --ok:#3EE08C; --warn:#FFB547; --bad:#FF6E6E;
-  --chip:#26225A; --scan:rgba(255,255,255,.035); color-scheme:dark}}
+  --bg:#22172F; --bg2:#2E2142; --panel:#30234A; --ink:#FFEAF4; --muted:#CDB3D9;
+  --line:#E9A6C7; --shadow:#140C1E; --taxi:#FF9CC2; --taxi-ink:#3A1E45;
+  --water:#7FD3FF; --pink:#C9A8FF; --ok:#62E3B5; --warn:#FFC266; --bad:#FF7A8C;
+  --chip:#3B2B54; --scan:rgba(255,156,194,.10); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0D0B22; --bg2:#151236; --panel:#1B1842; --ink:#EEEBFF; --muted:#A9A5DA;
-  --line:#6C66D9; --shadow:#000000; --taxi:#FFD23F; --taxi-ink:#17163C;
-  --water:#41CFFF; --pink:#FF63A5; --ok:#3EE08C; --warn:#FFB547; --bad:#FF6E6E;
-  --chip:#26225A; --scan:rgba(255,255,255,.035); color-scheme:dark}
+  --bg:#22172F; --bg2:#2E2142; --panel:#30234A; --ink:#FFEAF4; --muted:#CDB3D9;
+  --line:#E9A6C7; --shadow:#140C1E; --taxi:#FF9CC2; --taxi-ink:#3A1E45;
+  --water:#7FD3FF; --pink:#C9A8FF; --ok:#62E3B5; --warn:#FFC266; --bad:#FF7A8C;
+  --chip:#3B2B54; --scan:rgba(255,156,194,.10); color-scheme:dark}
 
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{font-size:calc(16px * var(--scale))}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:1rem;line-height:1.55;
-  background-image:repeating-linear-gradient(0deg,var(--scan) 0 2px,transparent 2px 4px);min-height:100%}
+  background-image:radial-gradient(var(--scan) 1.6px,transparent 1.8px);background-size:22px 22px;min-height:100%}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -177,13 +177,77 @@ details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
 .auth-link{background:transparent;border:0;color:#41CFFF;text-decoration:underline;font-size:.95rem;padding:.5rem;cursor:pointer;min-height:2.75rem}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 러블리 테마: 둥근 모양, 부드러운 그림자, 캐릭터 ---- */
+.px{border-radius:20px;border-width:2.5px;box-shadow:0 6px 0 var(--shadow)}
+.tag{border-radius:999px;background:var(--taxi);color:var(--taxi-ink);padding:.4rem .65rem}
+.btn{border-radius:999px;border-width:2.5px;box-shadow:0 4px 0 var(--shadow)}
+.btn:active{transform:translateY(4px);box-shadow:0 0 0 var(--shadow)}
+.btn.b{color:#fff}
+.ic{border-radius:14px;box-shadow:0 3px 0 var(--shadow)}
+.hud{background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(6px);border-bottom:2.5px dashed var(--shadow)}
+.logo{color:var(--ink)}
+.logo .ari-s{width:1.9rem;height:auto}
+.bar{border-radius:999px;border-width:2.5px}
+.bar b{background:linear-gradient(90deg,var(--taxi),var(--pink),var(--water));border-radius:999px;transition:width .6s cubic-bezier(.3,1.4,.5,1)}
+.coins{color:var(--taxi);text-shadow:none}
+.date-nav input,.gauge input,.meas input,textarea,.inp{border-radius:12px}
+.gauge{border-radius:16px;border-width:2.5px}
+.verdict{border-radius:999px;padding:.3rem .5rem}
+.drop{border-radius:18px;border-width:2.5px}
+.thumbs img{border-radius:10px}
+.stop{border-radius:18px;border-width:2.5px;box-shadow:0 5px 0 var(--shadow)}
+.chk{border-radius:12px;border-width:2.5px;box-shadow:0 3px 0 var(--shadow)}
+.chk:checked{background:var(--taxi)}
+.stop.done .nm{text-decoration-color:var(--taxi)}
+.chip{border-radius:999px;border-width:2px}
+.chip.gu{background:var(--water)}
+.chip.of{background:var(--taxi)}
+.stamp{border-radius:999px;color:var(--taxi);border-color:var(--taxi);font-size:.55rem}
+.stamp::before{content:"\2665  "}
+.office-h .sw{border-radius:50%}
+.leg{border-left:3px dotted var(--taxi)}
+.toast{border-radius:999px;border-color:var(--taxi)}
+.warnbox,.sharedbox{border-radius:18px}
+
+/* 캐릭터 카드 */
+.ari-card{display:grid;grid-template-columns:auto 1fr;gap:.8rem;align-items:center;background:linear-gradient(135deg,var(--chip),var(--panel))}
+.ari-btn{background:none;border:0;padding:0;cursor:pointer;width:5.2rem}
+.ari-btn svg{width:100%;height:auto;display:block}
+.ari-bob{animation:bob 2.4s ease-in-out infinite}
+.ari-jump{animation:jump .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes jump{30%{transform:translateY(-22px) scale(1.05,.95)}60%{transform:translateY(0) scale(1.08,.92)}}
+.bubble{position:relative;background:var(--panel);border:2.5px solid var(--line);border-radius:18px;padding:.7rem .9rem;font-family:var(--f-disp);font-size:1.15rem;line-height:1.4;min-width:0}
+.bubble::before{content:"";position:absolute;left:-11px;top:50%;width:16px;height:16px;background:var(--panel);border-left:2.5px solid var(--line);border-bottom:2.5px solid var(--line);transform:translateY(-50%) rotate(45deg)}
+.bubble small{display:block;font-family:var(--f-body);font-size:.75rem;color:var(--muted);margin-top:.2rem}
+.heart{position:fixed;pointer-events:none;color:var(--taxi);font-size:1.4rem;z-index:56}
+
+/* 대화창(인트로·로그인·알림) */
+.term{background:var(--panel);color:var(--ink);border:3px solid var(--taxi);border-radius:24px;box-shadow:0 8px 0 var(--shadow)}
+.term::before{display:none}
+.term .t-h{color:var(--taxi)}
+.term .t-ari{width:4.6rem;margin:-.4rem auto .4rem;display:block}
+.term .typed{color:var(--ink);text-align:center;font-size:1.25rem}
+.term .typed::after{color:var(--taxi)}
+.term .opt{border:2.5px solid var(--line);color:var(--ink);border-radius:999px;text-align:center;background:var(--chip)}
+.term .opt:hover,.term .opt:focus-visible{border-color:var(--taxi);color:var(--ink);background:color-mix(in srgb,var(--taxi) 25%,var(--panel))}
+.term .opt:hover::before,.term .opt:focus-visible::before{content:"\2665 "}
+.term .inp{background:var(--panel);color:var(--ink);border:2.5px solid var(--line)}
+.term label.small{color:var(--muted)!important;font-weight:800}
+.auth-tabs{border:2.5px solid var(--line)!important;border-radius:999px;overflow:hidden}
+.auth-tab{color:var(--muted)!important}
+.auth-tab.on{background:var(--taxi)!important;color:var(--taxi-ink)!important}
+.auth-go{background:var(--taxi)!important;border-color:var(--line)!important;color:var(--taxi-ink)!important}
+.auth-link{color:var(--water)!important}
+.clear-banner{color:var(--taxi);text-shadow:3px 3px 0 var(--shadow)}
+#au-msg{color:var(--bad)!important}
 </style>
 </head>
 <body>
 <header class="hud">
   <div class="hud-in">
     <div class="hud-top">
-      <div class="logo"><i aria-hidden="true"></i>아리수 퀘스트</div>
+      <div class="logo"><span id="logoAri" aria-hidden="true"></span>아리수 퀘스트</div>
       <div class="tools">
         <button class="btn ic" id="fontDown" aria-label="글씨 작게">A-</button>
         <button class="btn ic" id="fontUp" aria-label="글씨 크게">A+</button>
@@ -198,6 +262,10 @@ details summary{cursor:pointer;font-weight:800;padding:.3rem 0}
 <main class="wrap" id="app">
   <div class="px warnbox" id="limitBanner" role="alert" hidden></div>
   <div class="px sharedbox" id="sharedBanner" hidden></div>
+  <section class="px ari-card" aria-label="아리의 한마디">
+    <button class="ari-btn" id="ariBtn" type="button" aria-label="아리 쓰다듬기"></button>
+    <div class="bubble" id="ariSay" aria-live="polite">안녕! 나는 물방울 아리야.</div>
+  </section>
   <section class="px" aria-label="날짜">
     <div class="date-nav">
       <button class="btn sm" id="prevDay" aria-label="이전 날">◀</button>
