@@ -1,0 +1,52 @@
+/* 시안 1 · Material 3 (Google): 톤 서피스, 큰 라운드 카드, 플로팅 액션 버튼(FAB), 필터 칩, 체크박스 리스트 */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap");
+:root{
+  --bg:#FEF7FF; --panel:#F3EDF7; --bg2:#E8DEF8; --ink:#1D1B20; --muted:#49454F; --faint:#79747E; --line:#CAC4D0;
+  --accent:#6750A4; --accent-ink:#FFFFFF; --accent-soft:#EADDFF; --on-soft:#21005D; --water:#0061A4;
+  --f-body:"Roboto","Noto Sans KR",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141218; --panel:#211F26; --bg2:#4A4458; --ink:#E6E0E9; --muted:#CAC4D0; --faint:#938F99; --line:#49454F;
+  --accent:#D0BCFF; --accent-ink:#381E72; --accent-soft:#4F378B; --on-soft:#EADDFF; --water:#9ECAFF}}
+:root[data-theme="dark"]{
+  --bg:#141218; --panel:#211F26; --bg2:#4A4458; --ink:#E6E0E9; --muted:#CAC4D0; --faint:#938F99; --line:#49454F;
+  --accent:#D0BCFF; --accent-ink:#381E72; --accent-soft:#4F378B; --on-soft:#EADDFF; --water:#9ECAFF}
+body{letter-spacing:0}
+.wrap{gap:12px;padding-bottom:7rem}
+/* 상단 앱 바 */
+.hud{background:var(--bg);backdrop-filter:none;padding-block:calc(.5rem + env(safe-area-inset-top,0px)) .5rem}
+.logo{font-size:1.35rem;font-weight:400}
+.hud .ic{background:transparent;border:0;border-radius:50%;color:var(--muted)}
+.bar{height:4px;background:var(--bg2)}
+/* FAB */
+.hud .btn.addq{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;min-height:56px;padding:0 20px;border-radius:16px;
+  background:var(--accent-soft);color:var(--on-soft);font-size:1rem;font-weight:500;box-shadow:0 3px 6px rgba(0,0,0,.18),0 1px 3px rgba(0,0,0,.2)}
+/* 카드 */
+.px{border-radius:28px;padding:20px}
+.px-h h2{font-size:1.35rem;font-weight:400}
+.ari-card{background:var(--accent-soft);color:var(--on-soft)}
+.ari-card .bubble,.ari-card .bubble small{color:var(--on-soft)}
+.btn{border-radius:20px;min-height:40px;font-weight:500;background:var(--bg2);color:var(--ink)}
+.btn.y,.btn.b{background:var(--accent);color:var(--accent-ink)}
+.btn.sm{border-radius:20px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.gauge{background:transparent;border:1px solid var(--line);border-radius:12px}
+.date-nav .btn{border-radius:50%;width:2.6rem;padding:0}
+/* 필터 칩 (M3 filter chip) */
+.fchip{border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--muted);font-weight:500}
+.fchip.on{background:var(--bg2);border-color:var(--bg2);color:var(--ink)}
+.fchip.on::before{content:"✓ "}
+.fchip.ghost{border:0;color:var(--accent);text-decoration:none}
+/* 리스트 */
+.list{border-top:0;gap:2px}
+.stop{border-bottom:0;background:var(--bg);border-radius:16px;padding:.35rem .6rem}
+.office-h{font-size:.9rem;font-weight:500;color:var(--accent)}
+.chk{border-radius:3px;width:1.2rem;height:1.2rem;border:2px solid var(--muted);margin:0 .6rem}
+.chk:checked{background:var(--accent);border-color:var(--accent)}
+.chk:checked::after{border-color:var(--accent-ink)}
+.stop .detail{background:var(--panel);border-radius:16px}
+.chip{border-radius:8px;border:1px solid var(--line);background:transparent}
+.chip.of{background:var(--accent-soft);color:var(--on-soft);border-color:transparent}
+.term,.sheet{border-radius:28px;background:var(--panel)}
+.term .opt{border-radius:20px}
+.toast{border-radius:4px;background:#322F35;color:#F5EFF7}

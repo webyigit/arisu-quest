@@ -1,0 +1,62 @@
+/* 시안 2 · iOS HIG (Apple): 큰 제목, 반투명 내비게이션 바, 그룹형 인셋 리스트, 세그먼트 컨트롤 */
+:root{
+  --bg:#F2F2F7; --panel:#FFFFFF; --bg2:#E3E3E8; --ink:#000000; --muted:#6C6C70; --faint:#8E8E93; --line:#D1D1D6;
+  --accent:#007AFF; --accent-ink:#FFFFFF; --accent-soft:#E5F0FF; --water:#007AFF; --ok:#34C759; --bad:#FF3B30; --warn:#FF9500;
+  --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Pretendard Variable",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#000000; --panel:#1C1C1E; --bg2:#2C2C2E; --ink:#FFFFFF; --muted:#AEAEB2; --faint:#8E8E93; --line:#38383A;
+  --accent:#0A84FF; --accent-ink:#FFFFFF; --accent-soft:#0A2540; --water:#0A84FF; --ok:#30D158; --bad:#FF453A; --warn:#FF9F0A}}
+:root[data-theme="dark"]{
+  --bg:#000000; --panel:#1C1C1E; --bg2:#2C2C2E; --ink:#FFFFFF; --muted:#AEAEB2; --faint:#8E8E93; --line:#38383A;
+  --accent:#0A84FF; --accent-ink:#FFFFFF; --accent-soft:#0A2540; --water:#0A84FF; --ok:#30D158; --bad:#FF453A; --warn:#FF9F0A}
+body{letter-spacing:-.02em}
+a{color:var(--accent);text-decoration:none}
+/* 내비게이션 바 + 큰 제목 */
+.hud{background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--line)}
+.hud-top{flex-wrap:nowrap}
+.logo{font-size:1.9rem;font-weight:800;letter-spacing:-.03em}
+.logo #logoAri{display:none}
+.hud .btn.addq{background:transparent;color:var(--accent);font-size:1.05rem;font-weight:400;padding:0}
+.hud .ic{background:transparent;border:0;color:var(--accent);font-weight:400}
+.exp{color:var(--faint)}
+.bar{height:4px;background:var(--bg2)}
+.bar b{background:var(--accent)}
+/* 그룹형 인셋: 회색 소제목이 카드 바깥 위에 */
+.wrap{gap:2.1rem;padding-top:1.4rem}
+.px{border-radius:12px;padding:.75rem 1rem}
+.px-h{margin:-2.45rem 0 1.1rem;padding:0 .1rem}
+.px-h h2{font-size:.8rem;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:.02em}
+.count{font-size:.8rem;font-weight:400;color:var(--muted)}
+.ari-card{margin-top:-.6rem}
+.btn{border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.btn.y,.btn.b{background:var(--accent);color:#fff}
+.btn.ghost{background:transparent;color:var(--bad);font-weight:400}
+.btn.sm{border-radius:8px}
+.date-nav .btn{background:transparent;font-size:1.1rem}
+.gauge{background:transparent;padding:.2rem .1rem;border-radius:0}
+.gauge+.gauge{border-left:.5px solid var(--line);padding-left:.8rem}
+.std{gap:0}
+/* 세그먼트 컨트롤 */
+.frow:not(.end){display:flex;flex-wrap:nowrap;background:var(--bg2);border-radius:9px;padding:2px;gap:0}
+.fchip{flex:1;border-radius:7px;background:transparent;color:var(--ink);font-weight:500;min-height:2rem;padding:.2rem .4rem;font-size:.82rem}
+.fchip.on{background:var(--panel);color:var(--ink);box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}
+.fchip.ghost{flex:none;background:none;color:var(--accent);text-decoration:none;font-weight:400}
+/* 리스트: 텍스트부터 시작하는 인셋 구분선 */
+.office-h{font-size:.8rem;font-weight:400;color:var(--muted);text-transform:uppercase;padding-top:.6rem}
+.office-h .sw{display:none}
+.list{border-top:0}
+.stop{border-bottom:0;position:relative;padding:.45rem 0}
+.stop+.stop::before{content:"";position:absolute;top:0;left:2.6rem;right:0;border-top:.5px solid var(--line)}
+.chk{width:1.4rem;height:1.4rem;border:1.5px solid var(--line);margin:0 .4rem 0 .1rem}
+.chk:checked{background:var(--accent);border-color:var(--accent)}
+.num{display:none}
+.stop .caret{font-size:1rem;color:var(--line)}
+.stop .caret{font-size:0}.stop .caret::after{content:"›";font-size:1.3rem;color:var(--faint)}
+.stop.open .caret::after{content:"⌄"}
+.stop .detail{background:var(--bg);border-radius:10px}
+.chip{background:var(--bg2);color:var(--ink);font-weight:500}
+.chip.of{background:var(--accent-soft);color:var(--accent)}
+.term,.sheet{border-radius:14px;padding:1.2rem}
+.term .opt{border-radius:12px;background:var(--bg2);color:var(--accent)}
+.toast{border-radius:14px;background:color-mix(in srgb,var(--panel) 85%,transparent);color:var(--ink);backdrop-filter:blur(20px);box-shadow:0 10px 30px rgba(0,0,0,.15)}

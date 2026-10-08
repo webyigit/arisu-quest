@@ -1,0 +1,71 @@
+/* 시안 4 · Fluent 2 (Microsoft): 브랜드색 헤더, 촘촘한 업무형 표, 4px 모서리, 탭형 필터, 넓은 화면 2단 */
+:root{
+  --bg:#F5F5F5; --panel:#FFFFFF; --bg2:#F0F0F0; --ink:#242424; --muted:#616161; --faint:#707070; --line:#E0E0E0;
+  --accent:#0F6CBD; --accent-ink:#FFFFFF; --accent-soft:#EBF3FC; --water:#115EA3; --ok:#107C10; --bad:#C50F1F; --warn:#BC4B09;
+  --f-body:"Segoe UI Variable Text","Segoe UI","Pretendard Variable",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1F1F1F; --panel:#292929; --bg2:#333333; --ink:#FFFFFF; --muted:#D6D6D6; --faint:#ADADAD; --line:#3D3D3D;
+  --accent:#479EF5; --accent-ink:#FFFFFF; --accent-soft:#082338; --water:#62ABF5; --ok:#54B054; --bad:#DC626D; --warn:#F1A66B}}
+:root[data-theme="dark"]{
+  --bg:#1F1F1F; --panel:#292929; --bg2:#333333; --ink:#FFFFFF; --muted:#D6D6D6; --faint:#ADADAD; --line:#3D3D3D;
+  --accent:#479EF5; --accent-ink:#FFFFFF; --accent-soft:#082338; --water:#62ABF5; --ok:#54B054; --bad:#DC626D; --warn:#F1A66B}
+body{letter-spacing:0}
+/* 브랜드 헤더 */
+.hud{background:#0F6CBD;color:#fff;backdrop-filter:none;padding-block:calc(.45rem + env(safe-area-inset-top,0px)) .45rem}
+.logo{font-size:1rem;font-weight:600;color:#fff}
+.hud .ic{background:transparent;border:0;color:#fff;border-radius:4px}
+.exp{color:#CFE4FA}
+.bar{height:4px;background:rgba(255,255,255,.3);border-radius:2px}
+.bar b{background:#fff;border-radius:2px}
+.coins{color:#fff}
+.hud .btn.addq{background:#fff;color:#0F6CBD;border-radius:4px;min-height:2rem;font-weight:600}
+/* 카드 */
+.px{border-radius:8px;padding:12px 16px;box-shadow:0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.14)}
+.px-h{margin-bottom:.6rem}
+.px-h h2{font-size:1rem;font-weight:600}
+.btn{border-radius:4px;min-height:2.1rem;padding:.3rem .8rem;font-weight:600;background:var(--panel);border:1px solid var(--line);font-size:.9rem}
+.btn.y,.btn.b{background:var(--accent);color:#fff;border-color:transparent}
+.btn.ghost{border:0;background:transparent;color:var(--muted)}
+.btn.sm{border-radius:4px;min-height:1.9rem}
+.gauge{border-radius:4px;background:var(--bg2)}
+.date-big{font-size:1.15rem;font-weight:600}
+.ari-card{padding:8px 16px}
+.ari-btn{width:2rem}
+.bubble{font-size:.88rem}
+/* 탭형 필터 */
+.fbar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:.2rem 1rem;border-bottom:1px solid var(--line);margin-bottom:0}
+.frow{gap:0}
+.frow.end{margin-left:auto}
+.fchip{border-radius:0;background:transparent;color:var(--muted);font-weight:400;min-height:2.2rem;padding:.2rem .6rem;border-bottom:3px solid transparent;font-size:.85rem}
+.fchip.on{background:transparent;color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
+.fchip.ghost{text-decoration:none;color:var(--accent);border:0}
+/* 표처럼 촘촘한 행 */
+.office{margin-top:.4rem}
+.office-h{font-size:.8rem;font-weight:600;background:var(--bg2);padding:.35rem .5rem;border-radius:4px}
+.office-h .sw{border-radius:2px}
+.list{border-top:0}
+.stop{padding:.15rem .3rem;gap:.4rem}
+.stop:hover{background:var(--bg2)}
+.stop .sum{min-height:2.3rem;gap:.8rem}
+@media (min-width:600px){.stop .tx{flex-direction:row;align-items:baseline;gap:.8rem}}
+.nm,.stop .nm{font-size:.92rem;font-weight:400;flex:0 1 auto}
+.stop .mini{font-size:.8rem;flex:1 1 auto}
+.num{font-size:.75rem;width:1.3rem}
+.chk{width:1.1rem;height:1.1rem;border-radius:3px;border:1px solid var(--muted);margin:0 .3rem}
+.chk:checked{background:var(--accent);border-color:var(--accent)}
+.chk:checked::after{width:.45rem;height:.25rem;border-width:0 0 2px 2px}
+.stop .detail{border-radius:4px;background:var(--bg2);padding:.7rem}
+.chip{border-radius:4px;background:var(--panel);border:1px solid var(--line)}
+.chip.of{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.term,.sheet{border-radius:8px;padding:1.4rem;box-shadow:0 0 8px rgba(0,0,0,.12),0 32px 64px rgba(0,0,0,.14)}
+.term .opt{border-radius:4px;border:1px solid var(--line);background:var(--panel)}
+.term .opt:first-child{background:var(--accent);color:#fff;border-color:transparent}
+.toast{border-radius:4px}
+/* 넓은 화면: 왼쪽 정보, 오른쪽 동선 */
+@media (min-width:960px){
+  .wrap{max-width:72rem;display:grid;grid-template-columns:22rem 1fr;align-items:start}
+  #app>section[aria-label="오늘의 동선"]{grid-column:2;grid-row:1 / span 6}
+  #app>*{grid-column:1}
+  .hud-in{max-width:72rem}
+}

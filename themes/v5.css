@@ -1,0 +1,76 @@
+/* 시안 5 · 에디토리얼(스위스 타이포그래피): 종이색 바탕, 카드 없이 굵은 괘선, 번호 붙은 섹션, 큰 숫자, 빨강 한 가지 */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&family=Noto+Serif+KR:wght@700;900&display=swap");
+:root{
+  --bg:#F3EFE6; --panel:transparent; --bg2:#E7E1D4; --ink:#141414; --muted:#4A4A4A; --faint:#7A766E; --line:#141414;
+  --accent:#D7261E; --accent-ink:#FFFFFF; --accent-soft:#F6D9D5; --water:#141414; --ok:#141414; --warn:#B4500A; --bad:#D7261E;
+  --f-body:"IBM Plex Sans KR",sans-serif; --mono:"IBM Plex Mono",monospace; --serif:"Noto Serif KR",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141413; --bg2:#25241F; --ink:#EDE8DC; --muted:#BDB7A9; --faint:#8D887C; --line:#EDE8DC;
+  --accent:#FF5A4E; --accent-ink:#141413; --accent-soft:#3A1F1C; --water:#EDE8DC; --ok:#EDE8DC; --warn:#F0A060}}
+:root[data-theme="dark"]{
+  --bg:#141413; --bg2:#25241F; --ink:#EDE8DC; --muted:#BDB7A9; --faint:#8D887C; --line:#EDE8DC;
+  --accent:#FF5A4E; --accent-ink:#141413; --accent-soft:#3A1F1C; --water:#EDE8DC; --ok:#EDE8DC; --warn:#F0A060}
+body{letter-spacing:-.01em;counter-reset:sec}
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px}
+/* 제호(마스트헤드) */
+.hud{background:var(--bg);backdrop-filter:none;border-bottom:4px double var(--line);padding-bottom:.5rem}
+.logo{font-family:var(--serif);font-size:1.5rem;font-weight:900;letter-spacing:-.03em}
+.logo #logoAri{display:none}
+.hud .btn.addq{background:var(--accent);color:var(--accent-ink);border-radius:0;font-family:var(--mono);font-size:.82rem;letter-spacing:.04em}
+.exp{font-family:var(--mono);color:var(--muted)}
+.bar{height:3px;background:var(--bg2);border-radius:0}
+.bar b{background:var(--accent);border-radius:0}
+.hud .ic{background:transparent;border:0;color:var(--ink);font-family:var(--mono)}
+/* 섹션: 카드 대신 괘선 + 번호 */
+.wrap{gap:0}
+.px{background:transparent;border-radius:0;padding:1.1rem 0 1.4rem;border-top:2px solid var(--line)}
+.px-h h2{font-family:var(--serif);font-size:1.5rem;font-weight:900;letter-spacing:-.03em}
+.px-h h2::before{counter-increment:sec;content:counter(sec,decimal-leading-zero);font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--accent);margin-right:.6rem;vertical-align:.35em}
+.count{font-family:var(--mono)}
+.ari-card{border-top:0;border-left:4px solid var(--accent);padding:.2rem 0 .2rem 1rem;margin:1rem 0}
+.ari-btn{display:none}
+.bubble{font-family:var(--serif);font-size:1.05rem;font-weight:700}
+.bubble small{font-family:var(--f-body);font-weight:400}
+.date-nav{grid-template-columns:1fr auto auto}
+.date-nav .mid{order:-1;text-align:left}
+.date-big{font-family:var(--serif);font-size:2.1rem;font-weight:900;letter-spacing:-.04em}
+.btn{border-radius:0;background:transparent;border:1.5px solid var(--line);color:var(--ink);font-weight:500}
+.btn.y,.btn.b{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.ghost{border:0;text-decoration:underline;color:var(--muted)}
+.btn.sm{border-radius:0}
+.date-nav input,textarea,.inp{border-radius:0;border:1.5px solid var(--line);background:transparent}
+.std{gap:0}
+.gauge{background:transparent;border-radius:0;padding:.2rem .8rem}
+.gauge:first-child{padding-left:0}
+.gauge+.gauge{border-left:1px solid var(--line)}
+.gauge .v{font-family:var(--mono);font-size:.95rem;font-weight:600;white-space:nowrap;letter-spacing:-.04em}
+.gauge .k{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+/* 필터: 밑줄 텍스트 */
+.fchip{background:transparent;border-radius:0;padding:.2rem .3rem;color:var(--muted);font-family:var(--mono);font-size:.8rem}
+.fchip.on{background:transparent;color:var(--ink);font-weight:600;box-shadow:inset 0 -3px 0 var(--accent)}
+.fchip.ghost{text-decoration:underline}
+/* 리스트 */
+.office-h{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--line);padding:.3rem 0}
+.office-h .sw{border-radius:0}
+.list{border-top:0}
+.stop{border-bottom:1px solid color-mix(in srgb,var(--line) 25%,transparent);padding:.5rem 0}
+.num{font-family:var(--mono);font-size:1.05rem;font-weight:600;color:var(--accent);width:1.8rem}
+.nm,.stop .nm{font-weight:700;font-size:1.02rem}
+.stop .mini,.stop .eta{font-family:var(--mono);font-size:.75rem}
+.chk{border-radius:0;width:1.3rem;height:1.3rem;border:1.5px solid var(--line)}
+.chk:checked{background:var(--ink);border-color:var(--ink)}
+.chk:checked::after{border-color:var(--bg)}
+.stop.done .nm{text-decoration-color:var(--accent);text-decoration-thickness:2px}
+.stop .detail{background:var(--bg2);border-radius:0}
+.chip{border-radius:0;background:transparent;border:1px solid var(--line);font-family:var(--mono);font-size:.72rem}
+.chip.of{background:var(--ink);color:var(--bg)}
+.src{font-style:italic}
+.term,.sheet{border-radius:0;background:var(--bg);border:2px solid var(--line);box-shadow:8px 8px 0 var(--ink)}
+.term .typed{font-family:var(--serif);font-weight:700}
+.term .opt{border-radius:0;border:1.5px solid var(--line);background:transparent}
+.term .opt:hover{background:var(--accent-soft)}
+.auth-tabs{border-radius:0;border:1.5px solid var(--line);padding:0}
+.auth-tab{border-radius:0}
+.auth-tab.on{background:var(--ink);color:var(--bg);box-shadow:none}
+.toast{border-radius:0;background:var(--ink);color:var(--bg);font-family:var(--mono)}

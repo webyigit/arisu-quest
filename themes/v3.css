@@ -1,0 +1,62 @@
+/* 시안 3 · 토스(TDS) 스타일: 카드 없이 흰 섹션과 회색 띠로 구분, 굵고 큰 글자, 화면 하단 고정 메인 버튼 */
+:root{
+  --bg:#F2F4F6; --panel:#FFFFFF; --bg2:#F2F4F6; --ink:#191F28; --muted:#4E5968; --faint:#8B95A1; --line:#E5E8EB;
+  --accent:#3182F6; --accent-ink:#FFFFFF; --accent-soft:#E8F3FF; --water:#3182F6; --ok:#03B26C; --bad:#F04452; --warn:#FE9800;
+  --f-body:"Pretendard Variable","Pretendard",-apple-system,sans-serif; --scale:1.12;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101013; --panel:#17171C; --bg2:#2C2C35; --ink:#FFFFFF; --muted:#C3C3C6; --faint:#7E7E87; --line:#2C2C35;
+  --accent:#3182F6; --accent-ink:#FFFFFF; --accent-soft:#1A2B44}}
+:root[data-theme="dark"]{
+  --bg:#101013; --panel:#17171C; --bg2:#2C2C35; --ink:#FFFFFF; --muted:#C3C3C6; --faint:#7E7E87; --line:#2C2C35;
+  --accent:#3182F6; --accent-ink:#FFFFFF; --accent-soft:#1A2B44}
+body{letter-spacing:-.02em}
+.wrap{padding:0 0 7.5rem;gap:12px;max-width:40rem}
+.hud{background:var(--panel);backdrop-filter:none;padding-inline:20px;margin:0}
+.logo{font-size:1.15rem;font-weight:700}
+.hud .ic{background:transparent;border:0;color:var(--faint)}
+.bar{height:8px;background:var(--bg2)}
+.bar b{background:var(--accent)}
+/* 하단 고정 메인 버튼 */
+.hud .btn.addq{position:fixed;left:20px;right:20px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;min-height:56px;border-radius:16px;font-size:1.05rem;font-weight:700;
+  background:var(--accent);color:#fff;box-shadow:0 -12px 24px var(--panel)}
+@media (min-width:700px){.hud .btn.addq{left:50%;right:auto;width:36rem;transform:translateX(-50%)}}
+/* 섹션 */
+.px{border-radius:0;padding:24px 20px}
+.px-h{margin-bottom:1rem}
+.px-h h2{font-size:1.3rem;font-weight:700}
+.ari-card{padding:16px 20px}
+.ari-card .bubble{font-size:1rem;font-weight:600}
+.date-nav{grid-template-columns:1fr auto auto}
+.date-nav .mid{order:-1;text-align:left}
+.date-big{font-size:1.6rem}
+.date-nav .btn{background:var(--bg2);border-radius:12px}
+.btn{border-radius:14px;background:var(--bg2);color:var(--muted);font-weight:600;min-height:3rem}
+.btn.y,.btn.b{background:var(--accent-soft);color:var(--accent)}
+.btn.sm{border-radius:10px;min-height:2.4rem}
+.btn.ghost{background:transparent;color:var(--faint)}
+.gauge{background:var(--bg2);border-radius:16px;padding:14px}
+.gauge .v{font-size:1.05rem;color:var(--ink);white-space:nowrap}
+.fchip{background:var(--bg2);color:var(--muted);font-weight:600;min-height:2.3rem;padding:.3rem .9rem}
+.fchip.on{background:var(--ink);color:var(--panel)}
+.fchip.ghost{background:none;color:var(--faint);text-decoration:none}
+/* 리스트: 구분선 없이 큰 행 */
+.list{border-top:0}
+.office-h{font-size:.9rem;color:var(--faint);font-weight:600;padding-top:.6rem}
+.office-h .sw{display:none}
+.stop{border-bottom:0;padding:.55rem 0}
+.stop .sum{min-height:3rem}
+.nm,.stop .nm{font-size:1.06rem;font-weight:600}
+.num{display:none}
+.chk{width:1.6rem;height:1.6rem;border:0;background:var(--line);margin:0 .5rem 0 0}
+.chk::after{content:"";width:.6rem;height:.32rem;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.chk:checked{background:var(--accent)}
+.stop .eta{font-weight:600}
+.stop .detail{background:var(--bg2);border-radius:16px;padding:16px}
+.chip{background:var(--panel);font-weight:600}
+.chip.of{background:var(--accent-soft);color:var(--accent)}
+.src{padding:0}
+.term,.sheet{border-radius:24px 24px 24px 24px;padding:24px}
+.term .typed{font-size:1.15rem;font-weight:700}
+.term .opt{border-radius:14px;min-height:3.2rem;font-size:1rem}
+.toast{border-radius:14px}
